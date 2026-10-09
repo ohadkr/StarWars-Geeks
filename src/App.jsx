@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import CharacterList from './components/CharacterList.jsx'
 import CharacterDetails from './components/CharacterDetails.jsx'
 import SearchBar from './components/SearchBar.jsx'
+import './App.css'
 
 export default function App() {
   const [characters, setCharacters] = useState([])
@@ -42,11 +43,11 @@ export default function App() {
   }, [])
 
   if (isLoading) {
-    return <p>Loading...</p>
+    return <main className="app app--status"><p className="status-message">Loading characters...</p></main>
   }
 
   if (error) {
-    return <p role="alert">Error: {error}</p>
+    return <main className="app app--status"><p className="status-message status-message--error" role="alert">Error: {error}</p></main>
   }
 
   const filteredCharacters = characters.filter((character) =>
@@ -55,13 +56,28 @@ export default function App() {
 
   return (
     <main className="app">
-      <h1>Star Wars Characters</h1>
-      <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-      <CharacterList
-        characters={filteredCharacters}
-        onSelectCharacter={setSelectedCharacter}
-      />
-      <CharacterDetails character={selectedCharacter} />
+      <header className="app-header">
+        <p className="app-kicker">GALACTIC ARCHIVE / 01</p>
+        <h1>Star Wars <span>Geeks</span></h1>
+      </header>
+      <div className="character-workspace">
+        <section className="roster-panel" aria-labelledby="roster-heading">
+          <div className="panel-heading">
+            <div>
+              <p className="panel-kicker">FIELD INDEX</p>
+              <h2 id="roster-heading">Characters</h2>
+            </div>
+            <span className="character-count">{filteredCharacters.length.toString().padStart(2, '0')}</span>
+          </div>
+          <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <CharacterList
+            characters={filteredCharacters}
+            onSelectCharacter={setSelectedCharacter}
+            selectedCharacter={selectedCharacter}
+          />
+        </section>
+        <CharacterDetails character={selectedCharacter} />
+      </div>
     </main>
   )
 }
