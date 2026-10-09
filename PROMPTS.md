@@ -19,3 +19,14 @@
 
 **סיכום משימה 1:** הסוכן יצר את הקומפוננטות והמידע המקומי. פתחתי את הדפדפן ב-localhost:5173, ראיתי שהרשימה נטענת בהצלחה, ובדקתי ב-DevTools שאין שגיאות אדומות של missing key בקונסול.
 
+**16:34 · copilot**
+
+> Please complete Task 2 from tasks.md: 'Click shows details - state in parent component, props to children'... (rest of prompt 2)
+
+**סיכום משימה 2:** וידאתי שה-state אכן מנוהל ב-App.jsx. בדקתי בדפדפן שכאשר האפליקציה עולה יש הודעה שמבקשת לבחור דמות, ולחיצה על דמות מהרשימה מציגה את הפרטים שלה ברכיב ה-CharacterDetails בעזרת ה-props.
+
+**16:45 · copilot**
+
+> Please complete Task 3 from tasks.md: 'Real fetch - replace local file with API, including loading and error states'... (rest of prompt)
+
+**סיכום משימה 3:** וידאתי שהנתונים מגיעים מה-API של swapi.info דרך useEffect. בדקתי את מצבי הרשת דרך ה-DevTools: ראיתי את מצב הטעינה בהתחלה, וכשניתקתי את הרשת (Offline) קיבלתי הודעת שגיאה במקום מסך לבן.

@@ -1,10 +1,8 @@
-import items from '../data/items.json';
-
-export default function CharacterList({ onSelectCharacter }) {
+export default function CharacterList({ characters, onSelectCharacter }) {
 	return (
 		<ul>
-			{items.map((character) => (
-				<li key={character.id}>
+			{characters.map((character) => (
+				<li key={character.url ?? character.name}>
 					<button type="button" onClick={() => onSelectCharacter(character)}>
 						{character.name}
 					</button>
