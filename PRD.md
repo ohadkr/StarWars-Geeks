@@ -1,35 +1,34 @@
-# PRD — <שם האפליקציה>
-
-> עמוד אחד. בלי קוד. אפשר לכתוב אותו בעזרת צ'אטבוט (ראו סעיף 5 בדף השיעור).
+# PRD — StarWars Geeks
 
 ## 1. Pitch
-משפט אחד: מה האפליקציה עושה, ולמי.
+A web application displaying a catalog of characters from the "Star Wars" universe in a convenient Master-Detail view, designed for fans and geeks who want to explore character information[cite: 8].
 
 ## 2. Who it is for
-מי המשתמש, ומה הוא רוצה להשיג.
+Star Wars fans who want to quickly find physical data and basic information (such as height, mass, and birth year) about their favorite characters in a simple and fast interface[cite: 8].
 
 ## 3. Screens
-- **List** — מה מוצג בכל שורה ברשימה.
-- **Details** — מה מוצג על הפריט שנבחר.
+- **List** — The character list: each row will display only the character's name[cite: 8].
+- **Details** — The details panel: will display the character's name, height, mass, hair color, birth year, and gender upon selection[cite: 8].
 
 ## 4. Must-have features
-עד 5. מה שלא נכנס לכאן — לא בונים עכשיו.
-
-1.
-2.
-3.
+1. Dynamic character list fetched in real-time from a public API[cite: 8].
+2. Expanded detail view (Master-Detail) triggered when clicking on a character from the list[cite: 8].
+3. A search bar allowing users to filter the character list by name[cite: 8].
+4. Network state management: a "Loading..." state during requests, and an error message in case of network failure[cite: 8].
 
 ## 5. Acceptance criteria
-3–5 שורות שאפשר לבדוק בעיניים.
-
-- When I ..., I see ...
-- When I ..., I see ...
-- When I ..., I see ...
+- When I load the app, I see a "Loading" message, followed by a list of Star Wars characters[cite: 8].
+- When I click on a character in the list, I see their detailed information (height, birth year, etc.) on the screen[cite: 8].
+- When I type a name in the search bar, I see the character list instantly filter to match my input[cite: 8].
+- When I open the app without an internet connection, I see a clear error message instead of a blank or broken screen[cite: 8].
 
 ## 6. Not now
-רעיונות טובים שנשארים לגרסה הבאה.
+- Pagination through different pages of the character list[cite: 8].
+- Displaying the planet the character comes from (requires an additional API call per character)[cite: 8].
+- Displaying character images (the basic API does not include images)[cite: 8].
+- Saving favorite characters to Local Storage[cite: 8].
 
 ## 7. Data
-- **API:** `https://...`
-- **שדות ברשימה:**
-- **שדות בפרטים:**
+- **API:** `https://swapi.info/api/people`[cite: 8]
+- **List fields:** `name`[cite: 8]
+- **Details fields:** `name`, `height`, `mass`, `hair_color`, `birth_year`, `gender`[cite: 8]
