@@ -4,7 +4,7 @@
 אחרי כל משימה, הוסיפו בעצמכם שורה אחת: מה בדקתם, ומה שיניתם בעצמכם.
 
 <!-- הרשומות מתווספות מתחת לשורה הזאת -->
-**16:30 · copilot**
+**9/10/26 · 16:30 · copilot**
 
 > Please complete Task 1 from tasks.md. 
 > 1. Create a new folder src/data and a file inside it named items.json. Fill it with a mock JSON array of 5 Star Wars characters (include properties like id, name, height, mass, hair_color, birth_year, and gender).
@@ -30,3 +30,9 @@
 > Please complete Task 3 from tasks.md: 'Real fetch - replace local file with API, including loading and error states'... (rest of prompt)
 
 **סיכום משימה 3:** וידאתי שהנתונים מגיעים מה-API של swapi.info דרך useEffect. בדקתי את מצבי הרשת דרך ה-DevTools: ראיתי את מצב הטעינה בהתחלה, וכשניתקתי את הרשת (Offline) קיבלתי הודעת שגיאה במקום מסך לבן.
+
+**21:50 · copilot**
+
+> Please complete Task 4 from tasks.md: 'Search or filter'... (rest of prompt)
+
+**סיכום משימה 4:** בדקתי את שורת החיפוש החדשה בדפדפן. הקלדתי שמות באותיות גדולות וקטנות ווידאתי שהסינון עובד בזמן אמת (case-insensitive) ושהרשימה המלאה חוזרת כשמוחקים את הטקסט.

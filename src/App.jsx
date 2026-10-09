@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import CharacterList from './components/CharacterList.jsx'
 import CharacterDetails from './components/CharacterDetails.jsx'
+import SearchBar from './components/SearchBar.jsx'
 
 export default function App() {
   const [characters, setCharacters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [selectedCharacter, setSelectedCharacter] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const controller = new AbortController()
@@ -47,11 +49,16 @@ export default function App() {
     return <p role="alert">Error: {error}</p>
   }
 
+  const filteredCharacters = characters.filter((character) =>
+    character.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
+
   return (
     <main className="app">
       <h1>Star Wars Characters</h1>
+      <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <CharacterList
-        characters={characters}
+        characters={filteredCharacters}
         onSelectCharacter={setSelectedCharacter}
       />
       <CharacterDetails character={selectedCharacter} />
