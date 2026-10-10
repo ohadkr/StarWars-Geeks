@@ -8,9 +8,15 @@ export default function App() {
   const [characters, setCharacters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [fetchAttempt, setFetchAttempt] = useState(0)
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+  const [sortOrder, setSortOrder] = useState('asc')
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('sw_theme')
+    return savedTheme === 'day' ? 'day' : 'night'
+  })
   const [favorites, setFavorites] = useState(() => {
     try {
       const savedFavorites = JSON.parse(localStorage.getItem('sw_favorites'))
@@ -23,6 +29,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('sw_favorites', JSON.stringify(favorites))
   }, [favorites])
+
+  useEffect(() => {
+    localStorage.setItem('sw_theme', theme)
+  }, [theme])
 
   function toggleFavorite(characterName) {
     setFavorites((currentFavorites) => (
@@ -61,25 +71,69 @@ export default function App() {
 
     fetchCharacters()
     return () => controller.abort()
-  }, [])
+  }, [fetchAttempt])
+
+  function retryLoadingCharacters() {
+    setError(null)
+    setIsLoading(true)
+    setFetchAttempt((attempt) => attempt + 1)
+  }
+
+  function resetFilters() {
+    setSearchQuery('')
+    setShowFavoritesOnly(false)
+  }
 
   if (isLoading) {
-    return <main className="app app--status"><p className="status-message">Loading characters...</p></main>
+    return (
+      <div className={`app-shell app-shell--${theme}`}>
+        <main className="app app--status"><p className="status-message">Loading characters...</p></main>
+      </div>
+    )
   }
 
   if (error) {
-    return <main className="app app--status"><p className="status-message status-message--error" role="alert">Error: {error}</p></main>
+    return (
+      <div className={`app-shell app-shell--${theme}`}>
+        <main className="app app--status">
+          <div className="status-message status-message--error" role="alert">
+            <p>Error: {error}</p>
+            <button className="retry-button" type="button" onClick={retryLoadingCharacters}>
+              Retry
+            </button>
+          </div>
+        </main>
+      </div>
+    )
   }
 
-  const filteredCharacters = characters.filter((character) =>
-    character.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (!showFavoritesOnly || favorites.includes(character.name)),
-  )
+  const filteredCharacters = characters
+    .filter((character) =>
+      character.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (!showFavoritesOnly || favorites.includes(character.name)),
+    )
+    .slice()
+    .sort((first, second) => {
+      const comparison = first.name.localeCompare(second.name, undefined, { sensitivity: 'base' })
+      return sortOrder === 'asc' ? comparison : -comparison
+    })
 
   return (
-    <main className="app">
+    <div className={`app-shell app-shell--${theme}`}>
+      <main className="app">
       <header className="app-header">
-        <p className="app-kicker">GALACTIC ARCHIVE / 01</p>
+        <div className="app-header__topline">
+          <p className="app-kicker">GALACTIC ARCHIVE / 01</p>
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={`Switch to ${theme === 'night' ? 'day' : 'night'} mode`}
+            onClick={() => setTheme((currentTheme) => currentTheme === 'night' ? 'day' : 'night')}
+          >
+            <span aria-hidden="true">{theme === 'night' ? '\u2600' : '\u263e'}</span>
+            {theme === 'night' ? 'Day mode' : 'Night mode'}
+          </button>
+        </div>
         <h1>Star Wars <span>Geeks</span></h1>
       </header>
       <div className="character-workspace">
@@ -92,17 +146,34 @@ export default function App() {
             <span className="character-count">{filteredCharacters.length.toString().padStart(2, '0')}</span>
           </div>
           <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-          <label className="favorites-filter">
-            <input
-              className="favorites-filter__input"
-              type="checkbox"
-              checked={showFavoritesOnly}
-              onChange={(event) => setShowFavoritesOnly(event.target.checked)}
-            />
-            <span className="favorites-filter__indicator" aria-hidden="true" />
-            <span>Show Favorites</span>
-            <span className="favorites-filter__count">{favorites.length}</span>
+          <label className="sort-control">
+            <span>Sort by name</span>
+            <select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
+              <option value="asc">A to Z</option>
+              <option value="desc">Z to A</option>
+            </select>
           </label>
+          <div className="roster-filter-row">
+            <label className="favorites-filter">
+              <input
+                className="favorites-filter__input"
+                type="checkbox"
+                checked={showFavoritesOnly}
+                onChange={(event) => setShowFavoritesOnly(event.target.checked)}
+              />
+              <span className="favorites-filter__indicator" aria-hidden="true" />
+              <span>Show Favorites</span>
+              <span className="favorites-filter__count">{favorites.length}</span>
+            </label>
+            <button
+              className="filter-reset"
+              type="button"
+              onClick={resetFilters}
+              disabled={!searchQuery && !showFavoritesOnly}
+            >
+              Reset filters
+            </button>
+          </div>
           <CharacterList
             characters={filteredCharacters}
             onSelectCharacter={setSelectedCharacter}
@@ -117,6 +188,7 @@ export default function App() {
           onToggleFavorite={toggleFavorite}
         />
       </div>
-    </main>
+      </main>
+    </div>
   )
 }

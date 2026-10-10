@@ -84,3 +84,14 @@
 > 4. Ensure this new filter works together with the existing searchQuery (e.g., if a user searches for 'Luke' while 'Show Favorites' is active, it should only show favorited characters containing 'Luke').
 
 **סיכום משימה 7:** בדקתי את כפתור סינון המועדפים. הפעלתי אותו וראיתי שהרשימה מציגה אך ורק את הדמויות שסימנתי קודם כמועדפות. כמו כן, בדקתי הקלדה בשורת החיפוש כשהסינון פעיל, ווידאתי ששני הסינונים (מועדפים + טקסט) עובדים יחד בצורה תקינה.
+
+**11:34 · copilot**
+> Please complete Task 8 from tasks.md: 'Sort the roster'.
+>
+> 1. Retry on fetch error: add a Retry button that tries loading characters again. Done when it recovers after a temporary network failure.
+> 2. Sort the roster: add A–Z and Z–A options. Done when sorting works alongside search and favorites-only filtering.
+> 3. Reset filters: add a clear action for the search query and favorites-only toggle. Done when one action restores the full roster.
+> 4. Improve unknown details: display “Unknown” for missing API values instead of raw values like unknown or n/a.
+> 5. Remember the selected character: restore the selection after a page reload. Done when its details reappear after refreshing.
+
+**סיכום משימה 8:** בדקתי את אפשרויות המיון החדשות בדפדפן. בחרתי במיון A-Z וראיתי שהרשימה הסתדרה אלפביתית. בנוסף, הקלדתי טקסט בחיפוש בזמן שהמיון פעל, ווידאתי ששתי הפונקציות עובדות יחד בצורה חלקה מבלי לדרוס אחת את השנייה.
