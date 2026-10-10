@@ -1,3 +1,12 @@
+const filmTitles = {
+  1: 'A New Hope',
+  2: 'The Empire Strikes Back',
+  3: 'Return of the Jedi',
+  4: 'The Phantom Menace',
+  5: 'Attack of the Clones',
+  6: 'Revenge of the Sith',
+}
+
 export default function CharacterDetails({ character, favorites, onToggleFavorite }) {
   if (!character) {
     return (
@@ -32,6 +41,27 @@ export default function CharacterDetails({ character, favorites, onToggleFavorit
         <div className="character-fact"><dt>Hair color</dt><dd>{character.hair_color}</dd></div>
         <div className="character-fact"><dt>Birth year</dt><dd>{character.birth_year}</dd></div>
         <div className="character-fact"><dt>Gender</dt><dd>{character.gender}</dd></div>
+        <div className="character-fact"><dt>Eye color</dt><dd>{character.eye_color}</dd></div>
+        <div className="character-fact"><dt>Skin color</dt><dd>{character.skin_color}</dd></div>
+        <div className="character-fact character-fact--films">
+          <dt>Films</dt>
+          <dd>
+            {character.films?.length ? (
+              <ul className="film-list">
+                {character.films.map((filmUrl, index) => {
+                  const filmNumber = filmUrl.match(/\/films\/(\d+)\/?$/)?.[1]
+                  const filmTitle = filmTitles[filmNumber] ?? `Film ${index + 1}`
+
+                  return (
+                    <li key={filmUrl}>
+                      <span className="film-list__title">{filmTitle}</span>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : 'No film appearances listed'}
+          </dd>
+        </div>
       </dl>
     </section>
   )

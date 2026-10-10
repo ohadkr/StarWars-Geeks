@@ -4,15 +4,25 @@ import CharacterDetails from './components/CharacterDetails.jsx'
 import SearchBar from './components/SearchBar.jsx'
 import './App.css'
 
+function readUrlFilters() {
+  const params = new URLSearchParams(window.location.search)
+
+  return {
+    searchQuery: params.get('q') ?? '',
+    showFavoritesOnly: params.get('favorites') === '1',
+    sortOrder: params.get('sort') === 'desc' ? 'desc' : 'asc',
+  }
+}
+
 export default function App() {
   const [characters, setCharacters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [fetchAttempt, setFetchAttempt] = useState(0)
   const [selectedCharacter, setSelectedCharacter] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-  const [sortOrder, setSortOrder] = useState('asc')
+  const [searchQuery, setSearchQuery] = useState(() => readUrlFilters().searchQuery)
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(() => readUrlFilters().showFavoritesOnly)
+  const [sortOrder, setSortOrder] = useState(() => readUrlFilters().sortOrder)
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('sw_theme')
     return savedTheme === 'day' ? 'day' : 'night'
@@ -33,6 +43,42 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('sw_theme', theme)
   }, [theme])
+
+  useEffect(() => {
+    const url = new URL(window.location.href)
+
+    if (searchQuery) {
+      url.searchParams.set('q', searchQuery)
+    } else {
+      url.searchParams.delete('q')
+    }
+
+    if (showFavoritesOnly) {
+      url.searchParams.set('favorites', '1')
+    } else {
+      url.searchParams.delete('favorites')
+    }
+
+    if (sortOrder === 'desc') {
+      url.searchParams.set('sort', sortOrder)
+    } else {
+      url.searchParams.delete('sort')
+    }
+
+    window.history.replaceState(null, '', url)
+  }, [searchQuery, showFavoritesOnly, sortOrder])
+
+  useEffect(() => {
+    function restoreFiltersFromUrl() {
+      const filters = readUrlFilters()
+      setSearchQuery(filters.searchQuery)
+      setShowFavoritesOnly(filters.showFavoritesOnly)
+      setSortOrder(filters.sortOrder)
+    }
+
+    window.addEventListener('popstate', restoreFiltersFromUrl)
+    return () => window.removeEventListener('popstate', restoreFiltersFromUrl)
+  }, [])
 
   function toggleFavorite(characterName) {
     setFavorites((currentFavorites) => (
