@@ -10,6 +10,26 @@ export default function App() {
   const [error, setError] = useState(null)
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const savedFavorites = JSON.parse(localStorage.getItem('sw_favorites'))
+      return Array.isArray(savedFavorites) ? savedFavorites : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('sw_favorites', JSON.stringify(favorites))
+  }, [favorites])
+
+  function toggleFavorite(characterName) {
+    setFavorites((currentFavorites) => (
+      currentFavorites.includes(characterName)
+        ? currentFavorites.filter((favorite) => favorite !== characterName)
+        : [...currentFavorites, characterName]
+    ))
+  }
 
   useEffect(() => {
     const controller = new AbortController()
@@ -74,9 +94,15 @@ export default function App() {
             characters={filteredCharacters}
             onSelectCharacter={setSelectedCharacter}
             selectedCharacter={selectedCharacter}
+            favorites={favorites}
+            onToggleFavorite={toggleFavorite}
           />
         </section>
-        <CharacterDetails character={selectedCharacter} />
+        <CharacterDetails
+          character={selectedCharacter}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+        />
       </div>
     </main>
   )

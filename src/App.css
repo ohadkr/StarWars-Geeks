@@ -172,6 +172,12 @@
   min-width: 0;
 }
 
+.character-list__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .character-list__button {
   display: flex;
   align-items: center;
@@ -186,6 +192,11 @@
   cursor: pointer;
   text-align: left;
   transition: background-color 140ms ease, color 140ms ease;
+}
+
+.character-list__row .character-list__button {
+  flex: 1;
+  min-width: 0;
 }
 
 .character-list__button:hover,
@@ -222,6 +233,58 @@
   padding: 16px 10px;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.favorite-button {
+  display: grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #849087;
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+
+.favorite-button:hover,
+.favorite-button:focus-visible {
+  outline: none;
+  border-color: var(--line);
+  background: var(--panel-raised);
+  color: var(--acid);
+}
+
+.favorite-button:focus-visible {
+  box-shadow: 0 0 0 2px rgb(130 211 189 / 30%);
+}
+
+.favorite-button.is-favorite {
+  color: var(--acid);
+}
+
+.details-panel__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.details-panel__title-row h2 {
+  min-width: 0;
+}
+
+.favorite-button--large {
+  flex-basis: 44px;
+  width: 44px;
+  height: 44px;
+  border-color: var(--line);
+  font-size: 1.45rem;
 }
 
 .details-panel {
