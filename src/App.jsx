@@ -10,6 +10,7 @@ export default function App() {
   const [error, setError] = useState(null)
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [favorites, setFavorites] = useState(() => {
     try {
       const savedFavorites = JSON.parse(localStorage.getItem('sw_favorites'))
@@ -71,7 +72,8 @@ export default function App() {
   }
 
   const filteredCharacters = characters.filter((character) =>
-    character.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    character.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (!showFavoritesOnly || favorites.includes(character.name)),
   )
 
   return (
@@ -90,6 +92,17 @@ export default function App() {
             <span className="character-count">{filteredCharacters.length.toString().padStart(2, '0')}</span>
           </div>
           <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <label className="favorites-filter">
+            <input
+              className="favorites-filter__input"
+              type="checkbox"
+              checked={showFavoritesOnly}
+              onChange={(event) => setShowFavoritesOnly(event.target.checked)}
+            />
+            <span className="favorites-filter__indicator" aria-hidden="true" />
+            <span>Show Favorites</span>
+            <span className="favorites-filter__count">{favorites.length}</span>
+          </label>
           <CharacterList
             characters={filteredCharacters}
             onSelectCharacter={setSelectedCharacter}
