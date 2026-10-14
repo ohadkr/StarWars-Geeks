@@ -11,6 +11,12 @@ StarWars Geeks is a responsive React application for exploring Star Wars charact
 - **Statistics dashboard:** View character and favorite counts, average height and mass, and a gender breakdown.
 - **Responsive layout:** The pages adapt to narrow mobile screens and wider desktop screens.
 
+## Image Handling & Network Resilience
+
+- **Primary visual source:** Character portraits load from GitHub Raw; film titles are resolved from SWAPI, and poster thumbnails are not currently displayed.
+- **Fallback mechanism:** If a portrait is missing or unavailable, the app uses a unique DiceBear Bottts SVG avatar. If that also fails, an inline SVG placeholder keeps the layout clean.
+- **Resilient UI:** These fallbacks are designed to avoid broken-image icons and keep character cards and detail pages visually stable when external image services are unavailable, including on restricted networks.
+
 ## Data source
 
 Character and related-resource data is fetched from [SWAPI](https://swapi.info/api/people).
