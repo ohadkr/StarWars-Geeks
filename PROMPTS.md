@@ -166,3 +166,26 @@
 > - Gender breakdown counts calculation.
 > 3. Ensure all tests pass when running `npm run test` (or `npx vitest run`).
 > 4. Ensure clean TypeScript typing with NO `any` types.
+
+**18:08 · copilot**
+
+> Please complete Task 8 from tasks.md: 'Final polish, build verification, and README update'.
+> 
+> Here are the specific instructions:
+> 
+> 1. **Update `README.md`:** Write a clear, professional overview in Hebrew or English including:
+> 
+> - Project name and description ('StarWars Geeks').
+> - Core features (Master-Detail pages, Search/Filtering, Favorites with `localStorage`, Statistics Dashboard).
+> - API used (`[https://swapi.info/api/people](https://swapi.info/api/people)`).
+> - How to run locally (`npm install`, `npm run dev`).
+> - How to run tests (`npm run test`, `npm run test:ui`).
+> 2. Verify all `tasks.md` items are marked complete `[x]`.
+> 3. Ensure no unused imports, console errors, or TypeScript warnings exist.
+> 4. Ensure clean CSS styling on narrow (mobile) and wide screens.
+
+**18:12 · copilot**
+
+> <system_notification>
+> Shell command "Start the app for responsive browser smoke test" (shellId: 76) has exited with exit code -1.
+> </system_notification>

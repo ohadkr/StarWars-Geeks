@@ -1,75 +1,51 @@
-# React + TypeScript + Vite
+# StarWars Geeks
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+StarWars Geeks is a responsive React application for exploring Star Wars characters. It uses React, TypeScript, Vite, and React Router to provide a character browser, detailed profiles, favorites, and statistics.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Character browser (Master–Detail):** Browse characters and open a detail page for each one.
+- **Search and filtering:** Filter the character list by name as you type.
+- **Character details:** View character attributes and readable names for related films, planets, species, vehicles, and starships.
+- **Favorites:** Add or remove characters from favorites; selections persist in `localStorage`.
+- **Statistics dashboard:** View character and favorite counts, average height and mass, and a gender breakdown.
+- **Responsive layout:** The pages adapt to narrow mobile screens and wider desktop screens.
 
-## React Compiler
+## Data source
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Character and related-resource data is fetched from [SWAPI](https://swapi.info/api/people).
 
-## Expanding the ESLint configuration
+## Requirements
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 20.19+ or 22.12+
+- npm
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Run locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Vite prints the local development URL in the terminal.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Tests
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Run the unit tests once:
 
+```sh
+npm run test
+```
+
+Open Vitest's interactive UI:
+
+```sh
+npm run test:ui
+```
+
+## Quality checks
+
+```sh
+npm run build
+npm run lint
 ```
