@@ -11,6 +11,7 @@ StarWars Geeks is a responsive React application for exploring Star Wars charact
 - **Character details:** View character attributes and readable names for related films, planets, species, vehicles, and starships.
 - **Similar characters:** Discover related characters based on shared films, species, or homeworld.
 - **Film pages:** Open a film from a character profile to see its episode details, opening crawl, and characters.
+- **Film directory:** Browse all six films in episode order, with theatrical posters and links to film details.
 - **Random discovery:** Pick a random character from the home page.
 - **Favorites:** Add or remove characters from favorites; search, sort, and import/export the list as JSON. Selections persist in `localStorage`.
 - **Statistics dashboard:** Compare character totals, average height and mass, and gender breakdowns for the full directory and favorites.
@@ -21,9 +22,10 @@ StarWars Geeks is a responsive React application for exploring Star Wars charact
 
 ## Image Handling & Network Resilience
 
-- **Primary visual source:** Character portraits load from GitHub Raw; film titles are resolved from SWAPI, and poster thumbnails are not currently displayed.
-- **Fallback mechanism:** If a portrait is missing or unavailable, the app uses a unique DiceBear Bottts SVG avatar. If that also fails, an inline SVG placeholder keeps the layout clean.
-- **Resilient UI:** These fallbacks are designed to avoid broken-image icons and keep character cards and detail pages visually stable when external image services are unavailable, including on restricted networks.
+- **Primary visual source:** Character portraits are matched by character name against the [Star Wars API image catalog](https://akabab.github.io/starwars-api/api/all.json); film titles are resolved from SWAPI.
+- **Film posters:** Posters for all six films are displayed beside film names in the home-page film filter, character details, and film pages. Images load directly from the official [StarWars.com image CDN](https://lumiere-a.akamaihd.net/).
+- **Fallback mechanism:** If a portrait is missing or its image has expired, the app searches the Star Wars Fandom image catalog before showing an inline SVG placeholder.
+- **Resilient UI:** Character cards and detail pages remain stable when image sources are unavailable, without using robot avatars.
 
 ## Data source
 

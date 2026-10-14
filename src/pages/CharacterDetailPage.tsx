@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CharacterAvatar from '../components/CharacterAvatar'
 import CharacterCard from '../components/CharacterCard'
+import FilmArtwork from '../components/FilmArtwork'
 import NetworkNotice from '../components/NetworkNotice'
 import { useFavorites } from '../context/useFavorites'
 import { useCharacterDirectory } from '../hooks/useCharacterDirectory'
@@ -98,7 +99,12 @@ function ReferenceBadge({
         title={`View details for ${label}`}
         aria-busy={relatedName?.status === 'loading'}
       >
-        {label}
+        <FilmArtwork
+          filmId={reference.id}
+          filmTitle={label}
+          size="thumbnail"
+        />
+        <span>{label}</span>
       </Link>
     )
   }
@@ -301,16 +307,6 @@ function CharacterDetailPage() {
     return () => window.removeEventListener('keydown', handleCharacterShortcut)
   }, [characterOrder.nextId, characterOrder.previousId, navigate])
 
-  const routeCharacterId = id && /^\d+$/.test(id) ? id : undefined
-  const urlCharacterId =
-    currentState.status === 'success'
-      ? extractId(currentState.character.url)
-      : undefined
-  const characterId =
-    urlCharacterId && /^\d+$/.test(urlCharacterId)
-      ? urlCharacterId
-      : routeCharacterId ?? ''
-
   return (
     <section className="character-detail">
       <Link className="character-detail__back" to="/">
@@ -345,7 +341,6 @@ function CharacterDetailPage() {
             <div className="character-detail__identity">
               <CharacterAvatar
                 key={currentState.character.url}
-                characterId={characterId}
                 characterName={currentState.character.name}
                 size="portrait"
               />

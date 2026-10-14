@@ -1,33 +1,132 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  fetchCharacterImage,
+  fetchFallbackCharacterImage,
+} from '../services/characterImages'
 import './CharacterAvatar.css'
 
 interface CharacterAvatarProps {
-  characterId: string
   characterName: string
   size: 'thumbnail' | 'portrait'
 }
 
+interface PortraitState {
+  characterName: string
+  imageUrl: string | null
+  usingFallback: boolean
+  failed: boolean
+}
+
 function CharacterAvatar({
-  characterId,
   characterName,
   size,
 }: CharacterAvatarProps) {
-  const encodedName = encodeURIComponent(characterName)
-  const isValidCharacterId = /^\d+$/.test(characterId)
-  const primaryImageSource = isValidCharacterId
-    ? `https://raw.githubusercontent.com/akabab/starwars-api/master/api/images/id/${characterId}.jpg`
-    : null
-  const fallbackImageSource = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodedName}`
-  const [imgError, setImgError] = useState(false)
-  const [fallbackError, setFallbackError] = useState(false)
+  const [portrait, setPortrait] = useState<PortraitState>({
+    characterName,
+    imageUrl: null,
+    usingFallback: false,
+    failed: false,
+  })
   const className = `character-avatar character-avatar--${size}`
 
-  if (fallbackError) {
+  useEffect(() => {
+    let isCurrent = true
+
+    fetchCharacterImage(characterName)
+      .then((imageUrl) => {
+        if (isCurrent) {
+          setPortrait({
+            characterName,
+            imageUrl,
+            usingFallback: false,
+            failed: imageUrl === null,
+          })
+        }
+      })
+      .catch(() => {
+        if (!isCurrent) {
+          return
+        }
+
+        fetchFallbackCharacterImage(characterName)
+          .then((fallbackImageUrl) => {
+            if (isCurrent) {
+              setPortrait({
+                characterName,
+                imageUrl: fallbackImageUrl,
+                usingFallback: true,
+                failed: fallbackImageUrl === null,
+              })
+            }
+          })
+          .catch(() => {
+            if (isCurrent) {
+              setPortrait({
+                characterName,
+                imageUrl: null,
+                usingFallback: true,
+                failed: true,
+              })
+            }
+          })
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [characterName])
+
+  const portraitIsCurrent = portrait.characterName === characterName
+  const imageUrl = portraitIsCurrent ? portrait.imageUrl : null
+  const portraitFailed = portraitIsCurrent && portrait.failed
+
+  function handleImageError() {
+    if (portrait.usingFallback) {
+      setPortrait((current) =>
+        current.characterName === characterName
+          ? { ...current, failed: true }
+          : current,
+      )
+      return
+    }
+
+    setPortrait((current) =>
+      current.characterName === characterName
+        ? { ...current, usingFallback: true }
+        : current,
+    )
+    fetchFallbackCharacterImage(characterName)
+      .then((fallbackImageUrl) => {
+        setPortrait((current) =>
+          current.characterName === characterName
+            ? {
+                characterName,
+                imageUrl: fallbackImageUrl,
+                usingFallback: true,
+                failed: fallbackImageUrl === null,
+              }
+            : current,
+        )
+      })
+      .catch(() => {
+        setPortrait((current) =>
+          current.characterName === characterName
+            ? { ...current, failed: true }
+            : current,
+        )
+      })
+  }
+
+  if (imageUrl === null || portraitFailed) {
     return (
       <span
         className={`${className} character-avatar--placeholder`}
         role="img"
-        aria-label={`${characterName} avatar placeholder`}
+        aria-label={
+          portraitFailed
+            ? `${characterName} portrait unavailable`
+            : `Loading ${characterName} portrait`
+        }
       >
         <svg
           className="character-avatar__icon"
@@ -41,23 +140,13 @@ function CharacterAvatar({
     )
   }
 
-  const imageSource = imgError || primaryImageSource === null
-    ? fallbackImageSource
-    : primaryImageSource
-
   return (
     <img
       className={className}
-      src={imageSource}
+      src={imageUrl}
       alt={characterName}
       referrerPolicy="no-referrer"
-      onError={() => {
-        if (!imgError && primaryImageSource !== null) {
-          setImgError(true)
-        } else {
-          setFallbackError(true)
-        }
-      }}
+      onError={handleImageError}
     />
   )
 }

@@ -229,8 +229,6 @@
 > - Apply the same character photo logic to `CharacterCard.tsx` so real character pictures display on the Home page grid and Favorites page instead of generic icons.
 > 4. Maintain strict TypeScript typing with NO `any` types.
 
-## 2026-10-14
-
 **18:29 · copilot**
 
 > The images are currently falling back to the placeholder icon due to SSL/CORS issues on `starwars-visualguide.com`. Please update image sources across `CharacterDetailPage.tsx` and `CharacterCard.tsx` to use reliable CDN URLs:
@@ -414,3 +412,11 @@
 > 6. **Keyboard Accessibility:** `/` shortcut to focus search bar, arrow key navigation between profiles, and reduced motion preference support.
 > 7. **Offline Support & Similar Characters:** Save character data for offline fallback with retry button, and show similar character recommendations.
 
+**23:00 · copilot**
+
+> Please update the Star Wars Geeks application as one task:
+>
+> - Replace robot-style avatars with original Star Wars character portraits matched to each character by name, and ensure every character has a working image.
+> - Store the character images in a local `characters` folder and load them from there, using images that are licensed or otherwise authorized for redistribution.
+> - Display the relevant movie poster next to every movie name throughout the application.
+> - Add a Films page to the navigation between Home and Favorites, listing all six films in episode order with posters and links to their detail pages.

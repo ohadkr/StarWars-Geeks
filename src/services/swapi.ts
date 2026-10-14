@@ -22,6 +22,21 @@ export interface Film {
   edited: string
 }
 
+function isFilm(value: unknown): value is Film {
+  return (
+    isRecord(value) &&
+    typeof value.title === 'string' &&
+    typeof value.episode_id === 'number' &&
+    typeof value.opening_crawl === 'string' &&
+    typeof value.director === 'string' &&
+    typeof value.producer === 'string' &&
+    typeof value.release_date === 'string' &&
+    typeof value.url === 'string' &&
+    typeof value.created === 'string' &&
+    typeof value.edited === 'string'
+  )
+}
+
 const stringFields: (keyof Character)[] = [
   'name',
   'height',
@@ -188,32 +203,25 @@ export async function fetchFilm(
   ensureSuccessfulResponse(response)
 
   const data: unknown = await response.json()
-  if (
-    !isRecord(data) ||
-    typeof data.title !== 'string' ||
-    typeof data.episode_id !== 'number' ||
-    typeof data.opening_crawl !== 'string' ||
-    typeof data.director !== 'string' ||
-    typeof data.producer !== 'string' ||
-    typeof data.release_date !== 'string' ||
-    typeof data.url !== 'string' ||
-    typeof data.created !== 'string' ||
-    typeof data.edited !== 'string'
-  ) {
+  if (!isFilm(data)) {
     throw new Error('The film API returned data in an unexpected format')
   }
 
-  return {
-    title: data.title,
-    episode_id: data.episode_id,
-    opening_crawl: data.opening_crawl,
-    director: data.director,
-    producer: data.producer,
-    release_date: data.release_date,
-    url: data.url,
-    created: data.created,
-    edited: data.edited,
+  return data
+}
+
+export async function fetchFilms(signal?: AbortSignal): Promise<Film[]> {
+  const response = await fetch('https://swapi.info/api/films', { signal })
+  if (!response.ok) {
+    throw new Error(`Failed to fetch films (${response.status})`)
   }
+
+  const data: unknown = await response.json()
+  if (!Array.isArray(data) || !data.every(isFilm)) {
+    throw new Error('The films API returned data in an unexpected format')
+  }
+
+  return data
 }
 
 export async function fetchResourceName(

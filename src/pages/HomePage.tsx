@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CharacterCard from '../components/CharacterCard'
+import FilmArtwork from '../components/FilmArtwork'
 import NetworkNotice from '../components/NetworkNotice'
 import SearchBar from '../components/SearchBar'
 import { fetchResourceName } from '../services/swapi'
@@ -132,7 +133,7 @@ function HomePage() {
 
   return (
     <section className="home-page">
-      <h1>Home - StarWars Geeks</h1>
+      <h1>StarWars Geeks</h1>
       {state.status === 'loading' && (
         <p role="status">Loading characters...</p>
       )}
@@ -200,22 +201,44 @@ function HomePage() {
                 ))}
               </select>
             </label>
-            <label className="character-controls__field">
+            <div className="character-controls__field character-controls__field--films">
               <span>Film</span>
-              <select
-                value={filters.filmUrl}
-                onChange={(event) =>
-                  updateFilter('filmUrl', event.currentTarget.value)
-                }
+              <div
+                className="film-filter-options"
+                role="group"
+                aria-label="Filter characters by film"
               >
-                <option value="">All films</option>
+                <button
+                  className="film-filter-option"
+                  type="button"
+                  aria-pressed={filters.filmUrl === ''}
+                  onClick={() => updateFilter('filmUrl', '')}
+                >
+                  <span className="film-filter-option__all" aria-hidden="true">
+                    All
+                  </span>
+                  <span>All films</span>
+                </button>
                 {filmOptions.map((url) => (
-                  <option key={url} value={url}>
-                    {resourceNames[url] ?? 'Loading film name...'}
-                  </option>
+                  <button
+                    className="film-filter-option"
+                    key={url}
+                    type="button"
+                    aria-pressed={filters.filmUrl === url}
+                    onClick={() => updateFilter('filmUrl', url)}
+                  >
+                    <FilmArtwork
+                      filmId={extractId(url)}
+                      filmTitle={resourceNames[url] ?? 'Film'}
+                      size="thumbnail"
+                    />
+                    <span>
+                      {resourceNames[url] ?? 'Loading film name...'}
+                    </span>
+                  </button>
                 ))}
-              </select>
-            </label>
+              </div>
+            </div>
             <label className="character-controls__field">
               <span>Species</span>
               <select

@@ -20,7 +20,6 @@ function CharacterCard({ character }: CharacterCardProps) {
         <div className="character-card__identity">
           <CharacterAvatar
             key={characterId}
-            characterId={characterId}
             characterName={character.name}
             size="thumbnail"
           />

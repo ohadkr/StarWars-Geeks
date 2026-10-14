@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Character } from '../types/character'
-import { fetchCharactersWithCache, fetchFilm } from './swapi'
+import { fetchCharactersWithCache, fetchFilm, fetchFilms } from './swapi'
 
 const CACHE_KEY = 'starwars-geeks-characters-cache'
 const characters: Character[] = [
@@ -51,6 +51,47 @@ describe('fetchCharactersWithCache', () => {
       )
 
       await expect(fetchFilm(1)).resolves.toEqual(film)
+    })
+
+    describe('fetchFilms', () => {
+      it('loads and validates the full film catalog', async () => {
+        const films = [
+          {
+            title: 'A New Hope',
+            episode_id: 4,
+            opening_crawl: 'A long time ago...',
+            director: 'George Lucas',
+            producer: 'Gary Kurtz',
+            release_date: '1977-05-25',
+            url: 'https://swapi.info/api/films/1',
+            created: '',
+            edited: '',
+          },
+        ]
+        vi.stubGlobal(
+          'fetch',
+          vi.fn().mockResolvedValue(
+            new Response(JSON.stringify(films), { status: 200 }),
+          ),
+        )
+
+        await expect(fetchFilms()).resolves.toEqual(films)
+      })
+
+      it('rejects malformed film catalogs', async () => {
+        vi.stubGlobal(
+          'fetch',
+          vi.fn().mockResolvedValue(
+            new Response(JSON.stringify([{ title: 'Incomplete' }]), {
+              status: 200,
+            }),
+          ),
+        )
+
+        await expect(fetchFilms()).rejects.toThrow(
+          'The films API returned data in an unexpected format',
+        )
+      })
     })
 
     it('rejects invalid IDs and malformed film data', async () => {

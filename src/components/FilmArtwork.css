@@ -1,0 +1,35 @@
+.film-artwork {
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--social-bg);
+}
+
+.film-artwork--thumbnail {
+  width: 34px;
+  height: 48px;
+}
+
+.film-artwork--poster {
+  width: clamp(100px, 18vw, 150px);
+  aspect-ratio: 2 / 3;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.film-artwork--placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--text);
+}
+
+.film-artwork--placeholder svg {
+  width: 58%;
+  height: 58%;
+  fill: currentColor;
+}

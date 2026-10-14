@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import CharacterCard from '../components/CharacterCard'
+import FilmArtwork from '../components/FilmArtwork'
 import NetworkNotice from '../components/NetworkNotice'
 import { useCharacterDirectory } from '../hooks/useCharacterDirectory'
 import { fetchFilm, type Film } from '../services/swapi'
@@ -81,7 +82,14 @@ function FilmDetailPage() {
             <p className="film-detail__eyebrow">
               Episode {filmState.film.episode_id}
             </p>
-            <h1>{filmState.film.title}</h1>
+            <div className="film-detail__title-row">
+              <FilmArtwork
+                filmId={filmId}
+                filmTitle={filmState.film.title}
+                size="poster"
+              />
+              <h1>{filmState.film.title}</h1>
+            </div>
             <p className="film-detail__meta">
               Directed by {filmState.film.director}
             </p>

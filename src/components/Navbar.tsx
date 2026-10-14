@@ -19,6 +19,14 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
         Home
       </NavLink>
       <NavLink
+        to="/films"
+        className={({ isActive }) =>
+          isActive ? 'navbar__link navbar__link--active' : 'navbar__link'
+        }
+      >
+        Films
+      </NavLink>
+      <NavLink
         to="/favorites"
         className={({ isActive }) =>
           isActive ? 'navbar__link navbar__link--active' : 'navbar__link'

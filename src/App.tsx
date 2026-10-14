@@ -7,6 +7,7 @@ import CharacterDetailPage from './pages/CharacterDetailPage'
 import ComparePage from './pages/ComparePage'
 import FavoritesPage from './pages/FavoritesPage'
 import FilmDetailPage from './pages/FilmDetailPage'
+import FilmsPage from './pages/FilmsPage'
 import HomePage from './pages/HomePage'
 import StatsPage from './pages/StatsPage'
 import './App.css'
@@ -85,6 +86,7 @@ function AppLayout() {
       <main className="app__content">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/films" element={<FilmsPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/compare" element={<ComparePage />} />
