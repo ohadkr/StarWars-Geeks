@@ -125,3 +125,28 @@
 > 2. **Disable Navigation:** Clicking on any badge (e.g. 'A New Hope', 'Tatooine', 'Snowspeeder') must NOT open external SWAPI URLs or navigate anywhere.
 > 3. **Keep Styling:** Maintain the current purple badge visual style, rounded borders, and layout, but set the CSS `cursor` property to `default` (instead of `pointer`).
 > 4. Ensure strict TypeScript typing with NO `any` types.
+
+**17:55 · copilot**
+
+> Please complete Task 6 from tasks.md: 'Develop Statistics page'.
+> 
+> Here are the specific instructions:
+> 
+> 1. In `src/pages/StatsPage.tsx`, construct an interactive and informative dashboard using data fetched from SWAPI and the user's favorites from `FavoritesContext`.
+> 2. Calculate and render the following metrics:
+> 
+> - **Total Characters Count** vs **Total Favorites Count** (and percentage favorited).
+> - **Average Height** of all characters (filtering out 'unknown' or non-numeric strings).
+> - **Average Mass** of all characters (filtering out 'unknown' or non-numeric strings).
+> - **Gender Breakdown** (counts and percentages for male, female, n/a, and unknown).
+> 3. Display these stats using clean, styled card containers / summary tiles.
+> 4. Ensure proper handling for loading states, empty favorites, and edge cases (e.g. division by zero or invalid numbers).
+> 5. Ensure strict TypeScript typing with NO `any` types.
+
+**18:00 · copilot**
+
+> lease fix the layout overlap issue in `src/pages/StatsPage.tsx`:
+> 
+> 1. **Fix Header Overlap:** Ensure the `<h1>Statistics</h1>` heading is positioned cleanly above the top row of statistic cards with proper spacing (`margin-bottom` / `gap`), so it is not covered or overlapped by the card containers.
+> 2. **Layout Polish:** Ensure consistent container margins and flex/grid alignment across the page.
+> 3. Keep all current statistics calculations and TypeScript types intact.

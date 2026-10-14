@@ -1,0 +1,85 @@
+.stats-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: min(100%, 1000px);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.stats-page > h1 {
+  margin: 0;
+}
+
+.stats-page__summary,
+.stats-page__gender-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}
+
+.stats-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  text-align: left;
+}
+
+.stats-card--highlight {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.stats-card h2,
+.stats-card h3 {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.stats-card__value {
+  color: var(--text-h);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.stats-card__detail {
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.stats-page__gender {
+  margin-top: 0;
+}
+
+.stats-page__gender > h2 {
+  margin-bottom: 16px;
+}
+
+.stats-card--gender {
+  padding: 18px 20px;
+}
+
+.stats-card--gender h3 {
+  text-transform: capitalize;
+}
+
+.stats-card--gender .stats-card__value {
+  font-size: 28px;
+}
+
+.stats-page__message,
+.stats-page__empty {
+  margin-top: 24px;
+}
+
+@media (max-width: 480px) {
+  .stats-card {
+    padding: 18px;
+  }
+}
