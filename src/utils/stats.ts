@@ -6,6 +6,15 @@ export type GenderCategory = (typeof genderCategories)[number]
 
 export type GenderBreakdown = Record<GenderCategory, number>
 
+export type CharacterSortField = 'name' | 'height' | 'mass'
+
+export interface CharacterFilters {
+  gender: GenderCategory | 'all'
+  speciesUrl: string
+  homeworldUrl: string
+  sortBy: CharacterSortField
+}
+
 export function filterCharactersByName(
   characters: Character[],
   query: string,
@@ -15,6 +24,67 @@ export function filterCharactersByName(
   return characters.filter((character) =>
     character.name.toLowerCase().includes(normalizedQuery),
   )
+}
+
+function parseMeasurement(value: string): number | null {
+  const normalizedValue = value.trim()
+
+  if (!normalizedValue || normalizedValue.toLowerCase() === 'unknown') {
+    return null
+  }
+
+  const measurement = Number(normalizedValue)
+  return Number.isFinite(measurement) ? measurement : null
+}
+
+export function filterAndSortCharacters(
+  characters: Character[],
+  query: string,
+  filters: CharacterFilters,
+): Character[] {
+  const filtered = filterCharactersByName(characters, query).filter(
+    (character) => {
+      const genderMatches =
+        filters.gender === 'all' ||
+        getGenderCategory(character.gender) === filters.gender
+      const speciesMatches =
+        !filters.speciesUrl ||
+        character.species.includes(filters.speciesUrl) ||
+        (filters.speciesUrl === 'none' && character.species.length === 0)
+      const homeworldMatches =
+        !filters.homeworldUrl || character.homeworld === filters.homeworldUrl
+
+      return genderMatches && speciesMatches && homeworldMatches
+    },
+  )
+
+  return filtered.sort((first, second) => {
+    if (filters.sortBy === 'name') {
+      return first.name.localeCompare(second.name, undefined, {
+        sensitivity: 'base',
+      })
+    }
+
+    const firstValue = parseMeasurement(first[filters.sortBy])
+    const secondValue = parseMeasurement(second[filters.sortBy])
+
+    if (firstValue === null || secondValue === null) {
+      if (firstValue === secondValue) {
+        return first.name.localeCompare(second.name, undefined, {
+          sensitivity: 'base',
+        })
+      }
+
+      return firstValue === null ? 1 : -1
+    }
+
+    return (
+      firstValue - secondValue ||
+      first.name.localeCompare(second.name, undefined, {
+        sensitivity: 'base',
+      })
+    )
+  })
 }
 
 export function sortCharactersByName(characters: Character[]): Character[] {

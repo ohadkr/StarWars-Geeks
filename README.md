@@ -5,7 +5,7 @@ StarWars Geeks is a responsive React application for exploring Star Wars charact
 ## Features
 
 - **Character browser (Master–Detail):** Browse characters and open a detail page for each one.
-- **Search and filtering:** Filter the character list by name as you type.
+- **Search, filtering, and sorting:** Filter by name, gender, species, or homeworld, and sort by name, height, or mass.
 - **Character details:** View character attributes and readable names for related films, planets, species, vehicles, and starships.
 - **Favorites:** Add or remove characters from favorites; selections persist in `localStorage`.
 - **Statistics dashboard:** View character and favorite counts, average height and mass, and a gender breakdown.

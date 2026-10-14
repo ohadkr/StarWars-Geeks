@@ -376,3 +376,29 @@
 > - On image load error (or if `charId` is missing), fall back seamlessly to DiceBear Bottts:
 > `[https://api.dicebear.com/7.x/bottts/svg?seed=$](https://api.dicebear.com/7.x/bottts/svg?seed=$){encodeURIComponent(character.name)}`
 > 4. Ensure clean image styling, proper responsiveness, and strict TypeScript typing with NO `any` types.
+
+**19:16 · copilot**
+
+> Please add a short section to `README.md` under **Architecture & Highlights** (or **UI/UX Resilience**):
+> 
+> ### Image Handling & Network Resilience
+> 
+> - **Primary Visual Sources:** Character images and movie posters are dynamically loaded using GitHub Raw / external CDN URLs.
+> - **Fallback Mechanism:** To handle network limitations, SSL/CORS issues, missing assets, or strict institutional firewall blocks (e.g., campus Wi-Fi filtering), the application seamlessly falls back to unique **DiceBear Bottts SVG avatars**.
+> - **Zero Broken UI Guarantee:** This approach ensures the UI remains 100% stable and visually clean across all client environments without displaying broken image icons or throwing console errors.
+
+**19:19 · copilot**
+
+> Here are some ideas, roughly prioritized:
+>
+> 1. Filtering and sorting: Filter by gender, species, or homeworld, and sort by name, height, or mass.
+> 2. Character comparison: Select two characters and compare their stats side by side.
+> 3. Favorite management: Sort favorites, add notes, or export/import them as JSON.
+> 4. Better data resilience: Cache fetched characters locally and add a retry action when SWAPI is unavailable.
+> 5. Richer statistics: Add simple charts and let users view stats for all characters or favorites only.
+> 6. Accessibility polish: Check keyboard navigation, visible focus states, screen-reader labels, and color contrast.
+> 7. More detail-page connections: Make related characters, planets, and films browsable within the app.
+
+**19:30 · copilot**
+
+> In the filtering by species and homeland  name don't apear. Fix it please.

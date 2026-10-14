@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Character } from '../types/character'
 import {
+  filterAndSortCharacters,
   filterCharactersByName,
   getAverage,
   getGenderBreakdown,
@@ -74,6 +75,74 @@ describe('sortCharactersByName', () => {
       'Anakin',
       'obi-wan',
     ])
+  })
+})
+
+describe('filterAndSortCharacters', () => {
+  const characters = [
+    createCharacter('Luke Skywalker', {
+      gender: 'male',
+      species: ['https://swapi.info/api/species/1'],
+      homeworld: 'https://swapi.info/api/planets/1',
+      height: '172',
+      mass: '77',
+    }),
+    createCharacter('Leia Organa', {
+      gender: 'female',
+      species: [],
+      homeworld: 'https://swapi.info/api/planets/2',
+      height: '150',
+      mass: '49',
+    }),
+    createCharacter('R2-D2', {
+      gender: 'n/a',
+      species: ['https://swapi.info/api/species/2'],
+      homeworld: 'https://swapi.info/api/planets/1',
+      height: '96',
+      mass: 'unknown',
+    }),
+  ]
+
+  const defaultFilters = {
+    gender: 'all',
+    speciesUrl: '',
+    homeworldUrl: '',
+    sortBy: 'name',
+  } as const
+
+  it('filters by gender, species, homeworld, and search together', () => {
+    expect(
+      filterAndSortCharacters(characters, 'luke', {
+        ...defaultFilters,
+        gender: 'male',
+        speciesUrl: 'https://swapi.info/api/species/1',
+        homeworldUrl: 'https://swapi.info/api/planets/1',
+      }).map(({ name }) => name),
+    ).toEqual(['Luke Skywalker'])
+  })
+
+  it('sorts numeric measurements ascending and puts unknown values last', () => {
+    expect(
+      filterAndSortCharacters(characters, '', {
+        ...defaultFilters,
+        sortBy: 'height',
+      }).map(({ name }) => name),
+    ).toEqual(['R2-D2', 'Leia Organa', 'Luke Skywalker'])
+    expect(
+      filterAndSortCharacters(characters, '', {
+        ...defaultFilters,
+        sortBy: 'mass',
+      }).map(({ name }) => name),
+    ).toEqual(['Leia Organa', 'Luke Skywalker', 'R2-D2'])
+  })
+
+  it('filters characters with no listed species', () => {
+    expect(
+      filterAndSortCharacters(characters, '', {
+        ...defaultFilters,
+        speciesUrl: 'none',
+      }).map(({ name }) => name),
+    ).toEqual(['Leia Organa'])
   })
 })
 
