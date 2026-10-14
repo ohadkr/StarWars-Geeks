@@ -413,3 +413,4 @@
 > 5. **Advanced Filters & Stats:** Filter characters by film, species, homeworld, and view side-by-side statistics (All vs. Favorites).
 > 6. **Keyboard Accessibility:** `/` shortcut to focus search bar, arrow key navigation between profiles, and reduced motion preference support.
 > 7. **Offline Support & Similar Characters:** Save character data for offline fallback with retry button, and show similar character recommendations.
+
