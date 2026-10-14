@@ -23,8 +23,6 @@
 > 4. Ensure active navigation links are styled or distinct using `NavLink`.
 > 5. Ensure clean TypeScript typing with NO `any` types.
 
-## 2026-10-14
-
 **17:13 · copilot**
 
 > Please complete Task 2 from tasks.md: 'Fetch data and setup TypeScript interfaces'.
@@ -40,8 +38,6 @@
 > - **Error state:** Display an error message if the fetch fails.
 > - **Success state:** Display a simple list of character names.
 > 5. Make sure no TypeScript errors occur and no `any` types are used.
-
-## 2026-10-14
 
 **17:25 · copilot**
 
@@ -189,3 +185,194 @@
 > <system_notification>
 > Shell command "Start the app for responsive browser smoke test" (shellId: 76) has exited with exit code -1.
 > </system_notification>
+
+**18:18 · copilot**
+
+> Please apply the following UI/UX enhancements, badge styling updates, and polish across the application (especially in `src/pages/CharacterDetailPage.tsx` and `src/components/CharacterCard.tsx`):
+> 
+> 1. **Character Images (Star Wars Visual Guide):**
+> 
+> - Display a character image avatar on `CharacterDetailPage.tsx` using: `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){id}.jpg`.
+> - Add image error handling (`onError`) to fall back gracefully to a clean placeholder icon/avatar if the image is missing.
+> - Add small thumbnail images on `CharacterCard.tsx` in the Home and Favorites pages.
+> 2. **Previous / Next Navigation on Detail Page:**
+> 
+> - Add '← Previous Character' and 'Next Character →' navigation buttons on `CharacterDetailPage` so users can cycle through characters directly without going back to Home.
+> 3. **Neutral, Non-Clickable Badge Styling:**
+> 
+> - Change the background of `films`, `vehicles`, `starships`, `homeworld`, and `species` badges/chips from purple to a subtle, neutral light gray (e.g. `bg-gray-100`, `border-gray-200`, `text-gray-700`).
+> - Remove all interactive cues: disable hover animations, set `cursor: default`, and remove active/focus effects so they clearly appear as informational tags rather than clickable buttons.
+> 4. **Fix Date Formatting:**
+> 
+> - Format `created` and `edited` dates cleanly as `DD/MM/YYYY` or `YYYY-MM-DD` to prevent RTL text alignment issues.
+> 5. **General Polish & TypeScript:**
+> 
+> - Maintain strict TypeScript typing with NO `any` types.
+> - Ensure full responsive design across desktop and mobile screens.
+
+**18:25 · copilot**
+
+> Please fix character images and add film poster thumbnails in `CharacterDetailPage.tsx` and `CharacterCard.tsx`:
+> 
+> 1. **Fix Character Image Extraction:**
+> 
+> - Extract the numeric character ID from `character.url` or route param `id` (e.g., extract `1` from `[https://swapi.info/api/people/1](https://swapi.info/api/people/1)`).
+> - Set the `<img src>` for character avatars to: `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){characterId}.jpg`.
+> - Render the `<img>` tag directly and ONLY switch to the placeholder icon if the `onError` event fires.
+> 2. **Add Film Poster Thumbnails:**
+> 
+> - For each film listed in `CharacterDetailPage`, extract its numeric film ID from the film URL (e.g., extract `1` from `[https://swapi.info/api/films/1](https://swapi.info/api/films/1)`).
+> - Include a small film poster image (`[https://starwars-visualguide.com/assets/img/films/$](https://starwars-visualguide.com/assets/img/films/$){filmId}.jpg`) inside or next to each film title tag/card.
+> - Style film badges as neat flex items holding a small rounded poster thumbnail alongside the film title.
+> 3. **Update Character Cards on Home & Favorites:**
+> 
+> - Apply the same character photo logic to `CharacterCard.tsx` so real character pictures display on the Home page grid and Favorites page instead of generic icons.
+> 4. Maintain strict TypeScript typing with NO `any` types.
+
+## 2026-10-14
+
+**18:29 · copilot**
+
+> The images are currently falling back to the placeholder icon due to SSL/CORS issues on `starwars-visualguide.com`. Please update image sources across `CharacterDetailPage.tsx` and `CharacterCard.tsx` to use reliable CDN URLs:
+> 
+> 1. **Reliable Character Image Source:**
+> 
+> - Extract the numeric character ID safely: `const id = character.url.split('/').filter(Boolean).pop();`
+> - Set character `<img src>` to: `[https://cdn.jsdelivr.net/gh/akabab/starwars-api@0.2.1/api/images/id/$](https://cdn.jsdelivr.net/gh/akabab/starwars-api@0.2.1/api/images/id/$){id}.jpg` with a secondary fallback to `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){id}.jpg`.
+> 2. **Reliable Film Poster Source:**
+> 
+> - Extract numeric film ID from film URL: `const filmId = filmUrl.split('/').filter(Boolean).pop();`
+> - Set film poster `<img src>` to: `[https://starwars-visualguide.com/assets/img/films/$](https://starwars-visualguide.com/assets/img/films/$){filmId}.jpg`.
+> 3. **Display Fix:**
+> 
+> - Render the `<img>` with proper dimensions (`w-32 h-32` or similar) and `object-cover` styling.
+> - Only switch to the SVG avatar placeholder if both image URLs fail to load.
+> 4. Ensure no TypeScript errors and maintain strict typing.
+
+**18:32 · copilot**
+
+> Please fix the blank image box issue on `CharacterDetailPage.tsx` and `CharacterCard.tsx`:
+> 
+> 1. **Reliable Raw GitHub CDN for Images:**
+> 
+> - Extract the character ID safely from the URL/param:
+> `const charId = character.url ? character.url.split('/').filter(Boolean).pop() : id;`
+> - Set the primary image source to the direct raw GitHub CDN:
+> `[https://raw.githubusercontent.com/akabab/starwars-api/master/api/images/id/$](https://raw.githubusercontent.com/akabab/starwars-api/master/api/images/id/$){charId}.jpg`
+> 2. **Fix Fallback Rendering (No Empty Boxes):**
+> 
+> - Manage an `imageError` state (`const [imgError, setImgError] = useState(false)`).
+> - If `!imgError`, render the `<img src={...} onError={() => setImgError(true)} alt={character.name} className="w-full h-full object-cover rounded-xl" />`.
+> - If `imgError` is true, render a clean SVG User/Avatar icon directly inside the styled container (do NOT leave the container empty/blank).
+> 3. **Apply same fix to `CharacterCard.tsx`** so character thumbnails render reliably on Home and Favorites pages.
+> 4. Ensure strict TypeScript typing with NO `any` types.
+
+**18:51 · copilot**
+
+> Please fix the character image loading on `CharacterDetailPage.tsx` and `CharacterCard.tsx` using a 100% reliable and working vector/avatar CDN:
+> 
+> 1. **Reliable Avatar CDN (DiceBear & RoboHash):**
+> 
+> - Set character primary image URL to DiceBear Bottts (SVG robot avatars):
+> `[https://api.dicebear.com/7.x/bottts/svg?seed=$](https://api.dicebear.com/7.x/bottts/svg?seed=$){encodeURIComponent(character.name)}`
+> - On image error, fall back to RoboHash:
+> `[https://robohash.org/$](https://robohash.org/$){encodeURIComponent(character.name)}.png?set=set1`
+> 2. **Render Image Component cleanly:**
+> 
+> - Render `<img src={imgUrl} alt={character.name} className="w-full h-full object-contain p-2 rounded-xl" />`.
+> - Only if both fail, display the SVG placeholder avatar.
+> 3. **Apply same image logic to `CharacterCard.tsx`** for Home and Favorites grids.
+> 4. Ensure no TypeScript errors and strict typing.
+
+**18:57 · copilot**
+
+> > "In `src/components/CharacterCard.tsx`, fix the character title text layout so letters do not wrap onto a new line awkwardly (e.g. 'Luke Skywalker' dropping the 'r'). Apply responsive text sizing like `text-base` or `text-lg`, and use `truncate` or `break-words` to ensure names render cleanly on one or two full lines."
+
+**18:59 · copilot**
+
+> Please update `CharacterDetailPage.tsx` and `CharacterCard.tsx` to display original Star Wars character photos and film posters from Star Wars Visual Guide:
+> 
+> 1. **Original Character Photos:**
+> 
+> - Extract the numeric ID from character URL (e.g. extract `1` from `[https://swapi.info/api/people/1/](https://swapi.info/api/people/1/)`).
+> - Set character `<img src>` to: `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){characterId}.jpg`.
+> - Add `onError` handling so if the original image fails to load or doesn't exist, it falls back to the DiceBear Bottts robot avatar (`[https://api.dicebear.com/7.x/bottts/svg?seed=$](https://api.dicebear.com/7.x/bottts/svg?seed=$){encodeURIComponent(character.name)}`).
+> 2. **Original Movie Posters:**
+> 
+> - Extract the numeric film ID from the film URL (e.g. extract `1` from `[https://swapi.info/api/films/1/](https://swapi.info/api/films/1/)`).
+> - Add a small rounded poster image (`[https://starwars-visualguide.com/assets/img/films/$](https://starwars-visualguide.com/assets/img/films/$){filmId}.jpg`) next to each film title badge on `CharacterDetailPage.tsx`.
+> 3. Ensure responsive layout, clean image sizing (`object-cover`), and strict TypeScript typing with NO `any` types.
+
+**19:02 · copilot**
+
+> The Visual Guide images are failing because the `starwars-visualguide.com` server blocks hotlinking requests from `localhost`.
+> 
+> Please update `CharacterDetailPage.tsx` and `CharacterCard.tsx` to fix both character photos and movie posters:
+> 
+> 1. **Add `referrerPolicy="no-referrer"`:**
+> 
+> - On ALL character and film `<img>` elements, set `referrerPolicy="no-referrer"`. This prevents hotlinking blocks and allows images to load from `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){id}.jpg` and `[https://starwars-visualguide.com/assets/img/films/$](https://starwars-visualguide.com/assets/img/films/$){id}.jpg`.
+> 2. **Fix Film Poster Badges:**
+> 
+> - Ensure each film item in `CharacterDetailPage.tsx` extracts the numeric film ID from `filmUrl` (e.g. `1` from `[https://swapi.info/api/films/1](https://swapi.info/api/films/1)`).
+> - Render a small film poster `<img src={`[https://starwars-visualguide.com/assets/img/films/$](https://starwars-visualguide.com/assets/img/films/$){filmId}.jpg`} referrerPolicy="no-referrer" alt={film.title} className="w-8 h-12 object-cover rounded mr-2" />` directly inside each film badge next to the film title.
+> 3. **Character Photos:**
+> 
+> - Ensure character photos use `[https://starwars-visualguide.com/assets/img/characters/$](https://starwars-visualguide.com/assets/img/characters/$){id}.jpg` with `referrerPolicy="no-referrer"`.
+> - Keep the DiceBear fallback ONLY for when an image genuinely does not exist (404).
+> 4. Ensure strict TypeScript typing with NO `any` types.
+
+**19:06 · copilot**
+
+> The images are still falling back to robots because of a React race condition: on initial render, `onError` fires before the numeric ID is extracted, locking `imgError` to `true`.
+> 
+> Please update `CharacterDetailPage.tsx` and `CharacterCard.tsx` with this exact implementation:
+> 
+> 1. **Robust ID Extraction Helper:**
+> Add a helper function to extract numeric IDs:
+> `const extractId = (url?: string) => url?.match(/\/(\d+)\/?$/)?.[1] || '';`
+> 2. **Reset Error State on Character Change:**
+> In components using character/film images, reset the error state when the URL/ID changes:
+> 
+> TypeScript
+> 
+> ```
+> const [imgError, setImgError] = useState(false);
+> const charId = extractId(character.url) || routeId;
+> 
+> useEffect(() => {
+>   setImgError(false);
+> }, [charId]);
+> ```
+> 3. **Render Image Only When ID Exists:**
+> 
+> - Render character photo ONLY if `charId` exists AND `!imgError`:
+> `<img src={`[https://starwars-visualguide.com/assets/img/characters/$](https://www.google.com/search?q=https://starwars-visualguide.com/assets/img/characters/%24){charId}.jpg`} referrerPolicy="no-referrer" alt={character.name} onError={() => setImgError(true)} className="w-full h-full object-cover rounded-xl" />`
+> - If `imgError` is true or `!charId`, show the fallback robot avatar.
+> 4. **Film Poster Badges on Detail Page:**
+> 
+> - For each film badge in `CharacterDetailPage.tsx`, extract `filmId = extractId(filmUrl)`.
+> - Render a small poster thumbnail alongside the film title:
+> `<img src={`[https://starwars-visualguide.com/assets/img/films/$](https://www.google.com/search?q=https://starwars-visualguide.com/assets/img/films/%24){filmId}.jpg`} referrerPolicy="no-referrer" alt={filmTitle} className="w-6 h-9 object-cover rounded mr-2 inline-block" onError={(e) => (e.currentTarget.style.display = 'none')} />`
+> 5. Ensure strict TypeScript typing with NO `any` types.
+
+**19:11 · copilot**
+
+> The root cause is now clear: `starwars-visualguide.com` is explicitly blocked by the college IT firewall (`Ono Academic College`).
+> 
+> Please update `CharacterDetailPage.tsx` and `CharacterCard.tsx` to REMOVE all requests to `starwars-visualguide.com` entirely and use GitHub CDN instead:
+> 
+> 1. **Complete Removal:**
+> 
+> - Remove all references to `starwars-visualguide.com` from the codebase so no fetch or image request hits that blocked domain.
+> 2. **GitHub Raw CDN for Character Photos:**
+> 
+> - Extract character numeric ID:
+> `const charId = character.url?.match(/\/(\d+)\/?$/)?.[1] || id;`
+> - Primary character image URL:
+> `[https://raw.githubusercontent.com/akabab/starwars-api/master/api/images/id/$](https://raw.githubusercontent.com/akabab/starwars-api/master/api/images/id/$){charId}.jpg`
+> 3. **Fallback Logic:**
+> 
+> - On image load error (or if `charId` is missing), fall back seamlessly to DiceBear Bottts:
+> `[https://api.dicebear.com/7.x/bottts/svg?seed=$](https://api.dicebear.com/7.x/bottts/svg?seed=$){encodeURIComponent(character.name)}`
+> 4. Ensure clean image styling, proper responsiveness, and strict TypeScript typing with NO `any` types.

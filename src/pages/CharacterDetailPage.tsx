@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import CharacterAvatar from '../components/CharacterAvatar'
 import { useFavorites } from '../context/useFavorites'
-import { fetchCharacter, fetchResourceName } from '../services/swapi'
+import {
+  fetchCharacter,
+  fetchCharacters,
+  fetchResourceName,
+} from '../services/swapi'
 import type { Character } from '../types/character'
+import { extractId, getCharacterId } from '../utils/character'
 import './CharacterDetailPage.css'
 
 type RelatedNameState =
@@ -12,9 +18,9 @@ type RelatedNameState =
   | { status: 'fallback'; label: string }
 
 type CharacterState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'success'; character: Character }
+  | { status: 'loading'; id: string | undefined }
+  | { status: 'error'; id: string | undefined; message: string }
+  | { status: 'success'; id: string | undefined; character: Character }
 
 const characterFields: { key: keyof Character; label: string }[] = [
   { key: 'height', label: 'Height' },
@@ -42,17 +48,23 @@ const referenceLabels: Record<string, string> = {
   vehicles: 'Vehicle',
 }
 
-function formatReference(url: string): string | null {
+interface ApiReference {
+  label: string
+  id: string
+}
+
+function getApiReference(url: string): ApiReference | null {
   try {
     const parsedUrl = new URL(url)
     const match = parsedUrl.pathname.match(/^\/api\/([^/]+)\/(\d+)\/?$/)
-    const label = match ? referenceLabels[match[1]] : undefined
+    const resourceType = match?.[1]
+    const label = resourceType ? referenceLabels[resourceType] : undefined
 
     if (parsedUrl.hostname !== 'swapi.info' || !match || !label) {
       return null
     }
 
-    return `${label} #${match[2]}`
+    return { label, id: match[2] }
   } catch {
     return null
   }
@@ -65,9 +77,9 @@ function ReferenceBadge({
   url: string
   relatedName: RelatedNameState | undefined
 }) {
-  const fallbackLabel = formatReference(url)
+  const reference = getApiReference(url)
 
-  if (!fallbackLabel) {
+  if (!reference) {
     return <span className="character-detail__raw-value">{url}</span>
   }
 
@@ -89,18 +101,14 @@ function ReferenceBadge({
   )
 }
 
-function formatDate(value: string): string {
+function formatDate(value: string): ReactNode {
   const date = new Date(value)
 
   if (Number.isNaN(date.getTime())) {
     return value
   }
 
-  return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  return <bdi dir="ltr">{date.toISOString().slice(0, 10)}</bdi>
 }
 
 function formatFieldValue(
@@ -149,8 +157,16 @@ function formatFieldValue(
 
 function CharacterDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const { isFavorite, toggleFavorite } = useFavorites()
-  const [state, setState] = useState<CharacterState>({ status: 'loading' })
+  const [state, setState] = useState<CharacterState>({
+    status: 'loading',
+    id,
+  })
+  const [characterOrder, setCharacterOrder] = useState<{
+    previousId: string | null
+    nextId: string | null
+  }>({ previousId: null, nextId: null })
   const [relatedNames, setRelatedNames] = useState<
     Record<string, RelatedNameState>
   >({})
@@ -161,8 +177,25 @@ function CharacterDetailPage() {
 
     async function loadCharacter() {
       try {
-        const character = await fetchCharacter(parsedId, controller.signal)
-        setState({ status: 'success', character })
+        const [character, characters] = await Promise.all([
+          fetchCharacter(parsedId, controller.signal),
+          fetchCharacters(controller.signal),
+        ])
+        setState({ status: 'success', id, character })
+
+        const characterIds = characters.map((item) =>
+          getCharacterId(item.url),
+        )
+        const currentIndex = characterIds.indexOf(String(parsedId))
+
+        setCharacterOrder({
+          previousId:
+            currentIndex > 0 ? characterIds[currentIndex - 1] : null,
+          nextId:
+            currentIndex >= 0 && currentIndex < characterIds.length - 1
+              ? characterIds[currentIndex + 1]
+              : null,
+        })
 
         const resourceUrls = [
           character.homeworld,
@@ -188,9 +221,16 @@ function CharacterDetailPage() {
               const name = await fetchResourceName(url, controller.signal)
               return [url, { status: 'resolved', name }] as const
             } catch {
+              const reference = getApiReference(url)
+
               return [
                 url,
-                { status: 'fallback', label: formatReference(url) ?? url },
+                {
+                  status: 'fallback',
+                  label: reference
+                    ? `${reference.label} #${reference.id}`
+                    : url,
+                },
               ] as const
             }
           }),
@@ -206,7 +246,7 @@ function CharacterDetailPage() {
 
         const message =
           error instanceof Error ? error.message : 'An unexpected error occurred'
-        setState({ status: 'error', message })
+        setState({ status: 'error', id, message })
       }
     }
 
@@ -215,41 +255,88 @@ function CharacterDetailPage() {
     return () => controller.abort()
   }, [id])
 
+  const currentState: CharacterState =
+    state.id === id ? state : { status: 'loading', id }
+  const routeCharacterId = id && /^\d+$/.test(id) ? id : undefined
+  const urlCharacterId =
+    currentState.status === 'success'
+      ? extractId(currentState.character.url)
+      : undefined
+  const characterId =
+    urlCharacterId && /^\d+$/.test(urlCharacterId)
+      ? urlCharacterId
+      : routeCharacterId ?? ''
+
   return (
     <section className="character-detail">
       <Link className="character-detail__back" to="/">
         Back to List
       </Link>
-      {state.status === 'loading' && (
+      {currentState.status === 'loading' && (
         <p className="character-detail__message" role="status">
           Loading character details...
         </p>
       )}
-      {state.status === 'error' && (
+      {currentState.status === 'error' && (
         <p className="character-detail__message" role="alert">
-          Error: {state.message}
+          Error: {currentState.message}
         </p>
       )}
-      {state.status === 'success' && (
+      {currentState.status === 'success' && (
         <article>
           <div className="character-detail__header">
-            <h1 className="character-detail__title">{state.character.name}</h1>
+            <div className="character-detail__identity">
+              <CharacterAvatar
+                key={currentState.character.url}
+                characterId={characterId}
+                characterName={currentState.character.name}
+                size="portrait"
+              />
+              <h1 className="character-detail__title">
+                {currentState.character.name}
+              </h1>
+            </div>
             <button
               className="character-detail__favorite"
               type="button"
-              aria-pressed={isFavorite(state.character)}
+              aria-pressed={isFavorite(currentState.character)}
               aria-label={
-                isFavorite(state.character)
-                  ? `Remove ${state.character.name} from favorites`
-                  : `Add ${state.character.name} to favorites`
+                isFavorite(currentState.character)
+                  ? `Remove ${currentState.character.name} from favorites`
+                  : `Add ${currentState.character.name} to favorites`
               }
-              onClick={() => toggleFavorite(state.character)}
+              onClick={() => toggleFavorite(currentState.character)}
             >
-              {isFavorite(state.character)
+              {isFavorite(currentState.character)
                 ? '★ Remove from Favorites'
                 : '☆ Add to Favorites'}
             </button>
           </div>
+          <nav
+            className="character-detail__pagination"
+            aria-label="Character navigation"
+          >
+            <button
+              type="button"
+              disabled={!characterOrder.previousId}
+              onClick={() =>
+                characterOrder.previousId &&
+                navigate(`/character/${characterOrder.previousId}`)
+              }
+            >
+              ← Previous Character
+            </button>
+            <button
+              type="button"
+              disabled={!characterOrder.nextId}
+              onClick={() =>
+                characterOrder.nextId &&
+                navigate(`/character/${characterOrder.nextId}`)
+              }
+            >
+              Next Character →
+            </button>
+          </nav>
           <dl className="character-detail__fields">
             {characterFields.map(({ key, label }) => {
               return (
@@ -258,7 +345,7 @@ function CharacterDetailPage() {
                   <dd>
                     {formatFieldValue(
                       key,
-                      state.character[key],
+                      currentState.character[key],
                       relatedNames,
                     )}
                   </dd>

@@ -1,37 +1,37 @@
 import { Link } from 'react-router-dom'
+import CharacterAvatar from './CharacterAvatar'
 import { useFavorites } from '../context/useFavorites'
 import type { Character } from '../types/character'
+import { extractId } from '../utils/character'
 import './CharacterCard.css'
 
 interface CharacterCardProps {
   character: Character
 }
 
-function getCharacterId(url: string): string {
-  const id = url.match(/\/people\/(\d+)\/?$/)?.[1]
-
-  if (!id) {
-    throw new Error(`Unable to extract character ID from URL: ${url}`)
-  }
-
-  return id
-}
-
 function CharacterCard({ character }: CharacterCardProps) {
-  const characterId = getCharacterId(character.url)
+  const characterId = extractId(character.url)
   const { isFavorite, toggleFavorite } = useFavorites()
   const favorite = isFavorite(character)
 
   return (
     <article className="character-card">
       <div className="character-card__header">
-        <Link
-          className="character-card__character-link"
-          to={`/character/${characterId}`}
-          aria-label={`View details for ${character.name}`}
-        >
-          <h2 className="character-card__name">{character.name}</h2>
-        </Link>
+        <div className="character-card__identity">
+          <CharacterAvatar
+            key={characterId}
+            characterId={characterId}
+            characterName={character.name}
+            size="thumbnail"
+          />
+          <Link
+            className="character-card__character-link"
+            to={`/character/${characterId}`}
+            aria-label={`View details for ${character.name}`}
+          >
+            <h2 className="character-card__name">{character.name}</h2>
+          </Link>
+        </div>
         <button
           className="character-card__favorite"
           type="button"
