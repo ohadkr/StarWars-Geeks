@@ -1,0 +1,29 @@
+.search-bar {
+  display: grid;
+  gap: 8px;
+  margin: 28px 0 24px;
+  text-align: left;
+}
+
+.search-bar__label {
+  color: var(--text-h);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.search-bar__input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.search-bar__input:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}

@@ -22,3 +22,36 @@
 > - Statistics (`/stats`)
 > 4. Ensure active navigation links are styled or distinct using `NavLink`.
 > 5. Ensure clean TypeScript typing with NO `any` types.
+
+## 2026-10-14
+
+**17:13 · copilot**
+
+> Please complete Task 2 from tasks.md: 'Fetch data and setup TypeScript interfaces'.
+> 
+> Here are the specific instructions:
+> 
+> 1. Create a TypeScript interface/type in `src/types/character.ts` for the character object returned from SWAPI (`[https://swapi.info/api/people](https://swapi.info/api/people)`). Include fields like `name`, `height`, `mass`, `hair_color`, `skin_color`, `eye_color`, `birth_year`, `gender`, `url`, etc. Do NOT use `any`.
+> 2. Create an API service or helper function in `src/services/swapi.ts` to fetch all characters from `[https://swapi.info/api/people](https://swapi.info/api/people)`.
+> 3. In `src/pages/HomePage.tsx`, fetch the character data on component mount (`useEffect`).
+> 4. Manage 3 distinct UI states in `HomePage`:
+> 
+> - **Loading state:** Display a clear loading indicator/message.
+> - **Error state:** Display an error message if the fetch fails.
+> - **Success state:** Display a simple list of character names.
+> 5. Make sure no TypeScript errors occur and no `any` types are used.
+
+## 2026-10-14
+
+**17:25 · copilot**
+
+> Please complete Task 3 from tasks.md: 'Build Home Page (Master view) and search'.
+> 
+> Here are the specific instructions:
+> 
+> 1. Create a `CharacterCard.tsx` component in `src/components/` to display basic character info (name, gender, birth year) in a clean card layout.
+> 2. Create a `SearchBar.tsx` component in `src/components/` that lets users filter the displayed characters by name in real-time (case-insensitive).
+> 3. Update `HomePage.tsx` to render the filtered list using `CharacterCard` in a responsive grid.
+> 4. Ensure every card rendered in a list has a unique `key` prop.
+> 5. Make each card clickable, so clicking it navigates to `/character/:id` using React Router `Link` or `useNavigate`. Create a helper function if needed to extract the character ID from the SWAPI `url` property.
+> 6. Keep clean TypeScript typing with NO `any` types.
