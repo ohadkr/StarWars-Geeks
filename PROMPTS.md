@@ -68,3 +68,60 @@
 > 4. Display all available character information in a clean, readable layout (e.g., Name, Height, Mass, Hair Color, Eye Color, Birth Year, Gender, etc.).
 > 5. Add a 'Back to List' button/link using `Link` or `useNavigate` to easily navigate back to the home page (`/`).
 > 6. Ensure strict TypeScript typing with NO `any` types.
+
+**17:37 · copilot**
+
+> Please complete Task 5 from tasks.md: 'Develop Favorites page and localStorage handling'.
+> 
+> Here are the specific instructions:
+> 
+> 1. Create a custom hook or context in `src/context/FavoritesContext.tsx` (or `src/hooks/useFavorites.ts`) to manage favorite character IDs or objects across the app.
+> 2. Persist the favorites array in `localStorage` so favorites remain saved after refreshing the browser.
+> 3. Add a favorite/star toggle button to `CharacterCard` and/or `CharacterDetailPage` allowing users to add or remove characters from favorites.
+> 4. In `src/pages/FavoritesPage.tsx` (`/favorites`), render a list/grid of all favorited characters.
+> 5. Include an empty state message in `FavoritesPage` when no favorites have been added yet.
+> 6. Ensure strict TypeScript typing with NO `any` types.
+
+**17:46 · copilot**
+
+> Please polish `src/pages/CharacterDetailPage.tsx` to beautifully present ALL API details without hiding any character data:
+> 
+> 1. **Keep All API Details Visible:** Display all character properties including Films, Starships, Vehicles, Homeworld, Height, Mass, Gender, Birth Year, Hair Color, Eye Color, and Skin Color.
+> 2. **Format Raw API URLs as Clean Badges/Tags:**
+> 
+> - For arrays like `films`, `vehicles`, and `starships`, convert raw SWAPI URLs (e.g. `[https://swapi.info/api/films/1](https://swapi.info/api/films/1)`) into neat, styled badges/chips with readable labels like `Film #1`, `Film #2`, `Vehicle #14`, `Starship #12` (or extract the ID to show readable names).
+> - For `homeworld`, format the URL into a clean label like `Planet #1` instead of showing the raw full URL string.
+> 3. **Format Units and Dates:**
+> 
+> - Add `cm` to `height` (e.g. `172 cm`) and `kg` to `mass` (e.g. `77 kg`).
+> - Format `created` and `edited`/`last updated` ISO strings into human-readable dates (e.g. using `toLocaleDateString()`).
+> 4. **Keep Action Elements:** Maintain the 'Add to Favorites' button and 'Back to List' link.
+> 5. Ensure responsive CSS and clean TypeScript with NO `any` types.
+
+**17:48 · copilot**
+
+> Please update `src/pages/CharacterDetailPage.tsx` (and `swapi.ts` if needed) to resolve and display the ACTUAL names and titles instead of placeholder labels like `Film #1` or `Planet #1`:
+> 
+> 1. **Fetch Related Resource Names:**
+> 
+> - For `films`: Fetch each film URL using `Promise.all` and display the film's actual `title` (e.g., 'A New Hope', 'The Empire Strikes Back').
+> - For `homeworld`: Fetch the planet URL and display the planet's actual `name` (e.g., 'Tatooine').
+> - For `vehicles` and `starships`: Fetch each URL and display the actual vehicle/starship `name` (e.g., 'Snowspeeder', 'X-wing').
+> - For `species`: Fetch and display the species `name` if available.
+> 2. **Loading / Fallback State for Extra Data:**
+> 
+> - Show a subtle loading state/spinner for these badges while fetching their names, or fall back gracefully if a sub-fetch fails.
+> 3. **UI Display:**
+> 
+> - Display the resolved names in clean, styled badges/chips.
+> - Remove the redundant `API URL` card from the bottom of the page.
+> 4. Ensure strict TypeScript typing with NO `any` types.
+
+**17:53 · copilot**
+
+> Please update `src/pages/CharacterDetailPage.tsx` to make all badge elements plain, non-clickable text tags:
+> 
+> 1. **Remove Hyperlinks:** Ensure badges for `films`, `homeworld`, `vehicles`, `starships`, and `species` are rendered as simple `<span>` or `<div>` elements, NOT `<a>` anchor tags or React Router `<Link>` components.
+> 2. **Disable Navigation:** Clicking on any badge (e.g. 'A New Hope', 'Tatooine', 'Snowspeeder') must NOT open external SWAPI URLs or navigate anywhere.
+> 3. **Keep Styling:** Maintain the current purple badge visual style, rounded borders, and layout, but set the CSS `cursor` property to `default` (instead of `pointer`).
+> 4. Ensure strict TypeScript typing with NO `any` types.

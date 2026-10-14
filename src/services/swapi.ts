@@ -28,7 +28,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-function isCharacter(value: unknown): value is Character {
+export function isCharacter(value: unknown): value is Character {
   if (!isRecord(value)) {
     return false
   }
@@ -81,4 +81,46 @@ export async function fetchCharacter(
   }
 
   return data
+}
+
+export async function fetchResourceName(
+  url: string,
+  signal?: AbortSignal,
+): Promise<string> {
+  let resourceUrl: URL
+
+  try {
+    resourceUrl = new URL(url)
+  } catch {
+    throw new Error('The related resource URL is invalid')
+  }
+
+  const match = resourceUrl.pathname.match(
+    /^\/api\/(films|planets|species|starships|vehicles)\/\d+\/?$/,
+  )
+
+  if (
+    resourceUrl.protocol !== 'https:' ||
+    resourceUrl.hostname !== 'swapi.info' ||
+    !match
+  ) {
+    throw new Error('The related resource URL is not a supported SWAPI URL')
+  }
+
+  const response = await fetch(resourceUrl.href, { signal })
+  ensureSuccessfulResponse(response)
+
+  const data: unknown = await response.json()
+  if (!isRecord(data)) {
+    throw new Error('The related resource returned data in an unexpected format')
+  }
+
+  const nameField = match[1] === 'films' ? 'title' : 'name'
+  const name = data[nameField]
+
+  if (typeof name !== 'string' || name.length === 0) {
+    throw new Error(`The related ${match[1]} resource has no ${nameField}`)
+  }
+
+  return name
 }

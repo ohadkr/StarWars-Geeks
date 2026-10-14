@@ -27,6 +27,29 @@
   text-align: left;
 }
 
+.favorites-page {
+  width: min(100%, 1000px);
+  text-align: center;
+}
+
+.favorites-page h1 {
+  margin-bottom: 28px;
+}
+
+.favorites-page__empty {
+  margin-top: 24px;
+}
+
+.favorites-storage-error {
+  margin: 12px 24px 0;
+  padding: 10px 14px;
+  border: 1px solid #b42318;
+  border-radius: 6px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 15px;
+}
+
 @media (max-width: 480px) {
   .app__content {
     padding: 32px 16px;
