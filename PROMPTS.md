@@ -416,7 +416,6 @@
 
 > Please update the Star Wars Geeks application as one task:
 >
-> - Replace robot-style avatars with original Star Wars character portraits matched to each character by name, and ensure every character has a working image.
-> - Store the character images in a local `characters` folder and load them from there, using images that are licensed or otherwise authorized for redistribution.
-> - Display the relevant movie poster next to every movie name throughout the application.
-> - Add a Films page to the navigation between Home and Favorites, listing all six films in episode order with posters and links to their detail pages.
+> 1. Replace robot-style avatars with original Star Wars character portraits matched to each character by name, and ensure every character has a working image.
+> 3. Display the relevant movie poster next to every movie name throughout the application.
+> 4. Add a Films page to the navigation between Home and Favorites, listing all six films in episode order with posters and links to their detail pages.
