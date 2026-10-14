@@ -150,3 +150,19 @@
 > 1. **Fix Header Overlap:** Ensure the `<h1>Statistics</h1>` heading is positioned cleanly above the top row of statistic cards with proper spacing (`margin-bottom` / `gap`), so it is not covered or overlapped by the card containers.
 > 2. **Layout Polish:** Ensure consistent container margins and flex/grid alignment across the page.
 > 3. Keep all current statistics calculations and TypeScript types intact.
+
+**18:05 · copilot**
+
+> Please complete Task 7 from tasks.md: 'Write unit tests with Vitest'.
+> 
+> Here are the specific instructions:
+> 
+> 1. Create a unit test file `src/utils/stats.test.ts` (or `src/utils/filter.test.ts`) to test app logic functions.
+> 2. Implement at least 5 meaningful unit tests using `vitest` (`describe`, `it`, `expect`) covering:
+> 
+> - Filtering characters by search term (case-insensitive, empty query handling).
+> - Sorting character lists (A-Z).
+> - Calculating average height and mass (handling numeric vs 'unknown' values).
+> - Gender breakdown counts calculation.
+> 3. Ensure all tests pass when running `npm run test` (or `npx vitest run`).
+> 4. Ensure clean TypeScript typing with NO `any` types.

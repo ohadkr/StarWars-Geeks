@@ -2,45 +2,17 @@ import { useEffect, useState } from 'react'
 import { useFavorites } from '../context/useFavorites'
 import { fetchCharacters } from '../services/swapi'
 import type { Character } from '../types/character'
+import {
+  genderCategories,
+  getAverage,
+  getGenderBreakdown,
+} from '../utils/stats'
 import './StatsPage.css'
 
 type CharactersState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
   | { status: 'success'; characters: Character[] }
-
-const genderCategories = ['male', 'female', 'n/a', 'unknown'] as const
-
-type GenderCategory = (typeof genderCategories)[number]
-
-function getGenderCategory(gender: string): GenderCategory {
-  const normalizedGender = gender.trim().toLowerCase()
-
-  if (
-    normalizedGender === 'male' ||
-    normalizedGender === 'female' ||
-    normalizedGender === 'n/a'
-  ) {
-    return normalizedGender
-  }
-
-  return 'unknown'
-}
-
-function getAverage(values: string[]): number | null {
-  const numericValues = values
-    .map((value) => value.trim())
-    .filter((value) => value !== '' && value.toLowerCase() !== 'unknown')
-    .map(Number)
-    .filter(Number.isFinite)
-
-  if (numericValues.length === 0) {
-    return null
-  }
-
-  return numericValues.reduce((total, value) => total + value, 0) /
-    numericValues.length
-}
 
 function formatAverage(value: number | null, unit: string): string {
   return value === null ? 'N/A' : `${value.toFixed(1)} ${unit}`
@@ -74,16 +46,7 @@ function StatsPage() {
   }, [])
 
   const characters = state.status === 'success' ? state.characters : []
-  const genderCounts: Record<GenderCategory, number> = {
-    male: 0,
-    female: 0,
-    'n/a': 0,
-    unknown: 0,
-  }
-
-  characters.forEach((character) => {
-    genderCounts[getGenderCategory(character.gender)] += 1
-  })
+  const genderCounts = getGenderBreakdown(characters)
 
   const totalCharacters = characters.length
   const favoritePercentage =

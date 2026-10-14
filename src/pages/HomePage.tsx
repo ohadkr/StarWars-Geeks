@@ -3,6 +3,7 @@ import CharacterCard from '../components/CharacterCard'
 import SearchBar from '../components/SearchBar'
 import { fetchCharacters } from '../services/swapi'
 import type { Character } from '../types/character'
+import { filterCharactersByName } from '../utils/stats'
 
 type CharactersState =
   | { status: 'loading' }
@@ -36,12 +37,9 @@ function HomePage() {
     return () => controller.abort()
   }, [])
 
-  const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredCharacters =
     state.status === 'success'
-      ? state.characters.filter((character) =>
-          character.name.toLowerCase().includes(normalizedQuery),
-        )
+      ? filterCharactersByName(state.characters, searchQuery)
       : []
 
   return (
