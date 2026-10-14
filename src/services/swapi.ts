@@ -42,19 +42,42 @@ function isCharacter(value: unknown): value is Character {
   )
 }
 
+function ensureSuccessfulResponse(response: Response): void {
+  if (!response.ok) {
+    throw new Error(`Failed to fetch characters (${response.status})`)
+  }
+}
+
 export async function fetchCharacters(
   signal?: AbortSignal,
 ): Promise<Character[]> {
   const response = await fetch(PEOPLE_URL, { signal })
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch characters (${response.status})`)
-  }
+  ensureSuccessfulResponse(response)
 
   const data: unknown = await response.json()
 
   if (!Array.isArray(data) || !data.every(isCharacter)) {
     throw new Error('The characters API returned data in an unexpected format')
+  }
+
+  return data
+}
+
+export async function fetchCharacter(
+  id: number,
+  signal?: AbortSignal,
+): Promise<Character> {
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw new Error('Character ID must be a positive integer')
+  }
+
+  const response = await fetch(`${PEOPLE_URL}/${id}`, { signal })
+  ensureSuccessfulResponse(response)
+
+  const data: unknown = await response.json()
+
+  if (!isCharacter(data)) {
+    throw new Error('The character API returned data in an unexpected format')
   }
 
   return data

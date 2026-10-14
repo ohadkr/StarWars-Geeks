@@ -55,3 +55,16 @@
 > 4. Ensure every card rendered in a list has a unique `key` prop.
 > 5. Make each card clickable, so clicking it navigates to `/character/:id` using React Router `Link` or `useNavigate`. Create a helper function if needed to extract the character ID from the SWAPI `url` property.
 > 6. Keep clean TypeScript typing with NO `any` types.
+
+**17:31 · copilot**
+
+> Please complete Task 4 from tasks.md: 'Build Character Detail page (Detail view)'.
+> 
+> Here are the specific instructions:
+> 
+> 1. In `src/pages/CharacterDetailPage.tsx`, use `useParams` from `react-router-dom` to extract the character `id` from the URL route `/character/:id`.
+> 2. Fetch the specific character details from `[https://swapi.info/api/people/:id](https://swapi.info/api/people/:id)` or find the character from the list.
+> 3. Manage Loading, Error, and Success states for the detail page.
+> 4. Display all available character information in a clean, readable layout (e.g., Name, Height, Mass, Hair Color, Eye Color, Birth Year, Gender, etc.).
+> 5. Add a 'Back to List' button/link using `Link` or `useNavigate` to easily navigate back to the home page (`/`).
+> 6. Ensure strict TypeScript typing with NO `any` types.
