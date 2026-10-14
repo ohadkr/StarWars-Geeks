@@ -12,6 +12,7 @@
 }
 
 .character-card:hover {
+  transform: translateY(-3px);
   border-color: var(--accent-border);
   box-shadow: var(--shadow);
 }

@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import CharacterCard from '../components/CharacterCard'
+import NetworkNotice from '../components/NetworkNotice'
 import SearchBar from '../components/SearchBar'
-import { fetchCharacters, fetchResourceName } from '../services/swapi'
-import type { Character } from '../types/character'
+import { fetchResourceName } from '../services/swapi'
+import { useCharacterDirectory } from '../hooks/useCharacterDirectory'
 import { extractId } from '../utils/character'
 import {
   filterAndSortCharacters,
@@ -21,16 +23,14 @@ function getResourceFallbackName(url: string, resourceLabel: string): string {
   return id ? `${resourceLabel} #${id}` : resourceLabel
 }
 
-type CharactersState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'success'; characters: Character[] }
-
 function HomePage() {
-  const [state, setState] = useState<CharactersState>({ status: 'loading' })
+  const navigate = useNavigate()
+  const { state, retry } = useCharacterDirectory()
   const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [filters, setFilters] = useState<CharacterFilters>({
     gender: 'all',
+    filmUrl: '',
     speciesUrl: '',
     homeworldUrl: '',
     sortBy: 'name',
@@ -38,29 +38,6 @@ function HomePage() {
   const [resourceNames, setResourceNames] = useState<Record<string, string>>(
     {},
   )
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function loadCharacters() {
-      try {
-        const characters = await fetchCharacters(controller.signal)
-        setState({ status: 'success', characters })
-      } catch (error: unknown) {
-        if (controller.signal.aborted) {
-          return
-        }
-
-        const message =
-          error instanceof Error ? error.message : 'An unexpected error occurred'
-        setState({ status: 'error', message })
-      }
-    }
-
-    void loadCharacters()
-
-    return () => controller.abort()
-  }, [])
 
   useEffect(() => {
     if (state.status !== 'success') {
@@ -72,6 +49,7 @@ function HomePage() {
       ...new Set([
         ...state.characters.flatMap((character) => character.species),
         ...state.characters.map((character) => character.homeworld),
+        ...state.characters.flatMap((character) => character.films),
       ]),
     ].filter(Boolean)
 
@@ -80,7 +58,9 @@ function HomePage() {
         resourceUrls.map(async (url) => {
           const resourceLabel = url.includes('/species/')
             ? 'Species'
-            : 'Planet'
+            : url.includes('/films/')
+              ? 'Film'
+              : 'Planet'
 
           try {
             const name = await fetchResourceName(url, controller.signal)
@@ -110,10 +90,38 @@ function HomePage() {
       ? [...new Set(state.characters.map((character) => character.homeworld))]
           .filter(Boolean)
       : []
+  const filmOptions =
+    state.status === 'success'
+      ? [...new Set(state.characters.flatMap((character) => character.films))]
+      : []
   const filteredCharacters =
     state.status === 'success'
       ? filterAndSortCharacters(state.characters, searchQuery, filters)
       : []
+
+  useEffect(() => {
+    function handleSearchShortcut(event: KeyboardEvent) {
+      const target = event.target
+      const isEditing =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.matches('input, textarea, select, button, a'))
+
+      if (
+        event.key === '/' &&
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !isEditing
+      ) {
+        event.preventDefault()
+        searchInputRef.current?.focus()
+      }
+    }
+
+    window.addEventListener('keydown', handleSearchShortcut)
+    return () => window.removeEventListener('keydown', handleSearchShortcut)
+  }, [])
 
   function updateFilter<Key extends keyof CharacterFilters>(
     key: Key,
@@ -128,10 +136,44 @@ function HomePage() {
       {state.status === 'loading' && (
         <p role="status">Loading characters...</p>
       )}
-      {state.status === 'error' && <p role="alert">Error: {state.message}</p>}
+      {state.status === 'error' && (
+        <NetworkNotice message={`Error: ${state.message}`} onRetry={retry} />
+      )}
       {state.status === 'success' && (
         <>
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          {state.networkError && (
+            <NetworkNotice
+              message={state.networkError}
+              onRetry={retry}
+              savedData={state.source === 'cache'}
+            />
+          )}
+          {state.cacheWarning && (
+            <p role="status" className="home-page__cache-warning">
+              {state.cacheWarning}
+            </p>
+          )}
+          <button
+            className="home-page__random"
+            type="button"
+            onClick={() => {
+              const character =
+                state.characters[Math.floor(Math.random() * state.characters.length)]
+              if (character) {
+                navigate(`/character/${extractId(character.url)}`)
+              }
+            }}
+          >
+            Surprise me with a character
+          </button>
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            inputRef={searchInputRef}
+          />
+          <p className="home-page__keyboard-tip">
+            Press <kbd>/</kbd> to focus character search
+          </p>
           <div
             className="character-controls"
             role="group"
@@ -154,6 +196,22 @@ function HomePage() {
                     {gender === 'n/a'
                       ? 'N/A'
                       : gender[0].toUpperCase() + gender.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="character-controls__field">
+              <span>Film</span>
+              <select
+                value={filters.filmUrl}
+                onChange={(event) =>
+                  updateFilter('filmUrl', event.currentTarget.value)
+                }
+              >
+                <option value="">All films</option>
+                {filmOptions.map((url) => (
+                  <option key={url} value={url}>
+                    {resourceNames[url] ?? 'Loading film name...'}
                   </option>
                 ))}
               </select>
@@ -214,6 +272,7 @@ function HomePage() {
                 setSearchQuery('')
                 setFilters({
                   gender: 'all',
+                  filmUrl: '',
                   speciesUrl: '',
                   homeworldUrl: '',
                   sortBy: 'name',

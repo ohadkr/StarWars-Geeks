@@ -10,6 +10,7 @@ export type CharacterSortField = 'name' | 'height' | 'mass'
 
 export interface CharacterFilters {
   gender: GenderCategory | 'all'
+  filmUrl: string
   speciesUrl: string
   homeworldUrl: string
   sortBy: CharacterSortField
@@ -53,8 +54,10 @@ export function filterAndSortCharacters(
         (filters.speciesUrl === 'none' && character.species.length === 0)
       const homeworldMatches =
         !filters.homeworldUrl || character.homeworld === filters.homeworldUrl
+      const filmMatches =
+        !filters.filmUrl || character.films.includes(filters.filmUrl)
 
-      return genderMatches && speciesMatches && homeworldMatches
+      return genderMatches && speciesMatches && homeworldMatches && filmMatches
     },
   )
 

@@ -402,3 +402,14 @@
 **19:30 · copilot**
 
 > In the filtering by species and homeland  name don't apear. Fix it please.
+
+**20:10 · copilot**
+
+> Please implement the following bonus features and UX polish for the application:
+> 1. **Character Comparison & Share Link:** Compare two characters side-by-side (`/compare`) with state synced to URL parameters (`/compare?c1=1&c2=2`).
+> 2. **Dark/Light Mode:** Theme toggle (Sun/Moon icon) saved in `localStorage`.
+> 3. **Favorites Import/Export:** Export favorites to JSON file and import JSON back to `FavoritesContext`.
+> 4. **Random Discovery:** '🎲 Random Character' button on Home navigating to a random profile.
+> 5. **Advanced Filters & Stats:** Filter characters by film, species, homeworld, and view side-by-side statistics (All vs. Favorites).
+> 6. **Keyboard Accessibility:** `/` shortcut to focus search bar, arrow key navigation between profiles, and reduced motion preference support.
+> 7. **Offline Support & Similar Characters:** Save character data for offline fallback with retry button, and show similar character recommendations.

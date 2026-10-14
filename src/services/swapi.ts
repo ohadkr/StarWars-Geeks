@@ -1,6 +1,26 @@
 import type { Character } from '../types/character'
 
 const PEOPLE_URL = 'https://swapi.info/api/people'
+const CHARACTERS_CACHE_KEY = 'starwars-geeks-characters-cache'
+
+export interface CharacterDirectoryResult {
+  characters: Character[]
+  source: 'network' | 'cache'
+  networkError: string | null
+  cacheWarning: string | null
+}
+
+export interface Film {
+  title: string
+  episode_id: number
+  opening_crawl: string
+  director: string
+  producer: string
+  release_date: string
+  url: string
+  created: string
+  edited: string
+}
 
 const stringFields: (keyof Character)[] = [
   'name',
@@ -63,6 +83,79 @@ export async function fetchCharacters(
   return data
 }
 
+export async function fetchCharactersWithCache(
+  signal?: AbortSignal,
+): Promise<CharacterDirectoryResult> {
+  try {
+    const characters = await fetchCharacters(signal)
+    let cacheWarning: string | null = null
+
+    try {
+      window.localStorage.setItem(
+        CHARACTERS_CACHE_KEY,
+        JSON.stringify(characters),
+      )
+    } catch (error: unknown) {
+      cacheWarning = `Characters could not be saved for offline use: ${getErrorMessage(error)}`
+    }
+
+    return {
+      characters,
+      source: 'network',
+      networkError: null,
+      cacheWarning,
+    }
+  } catch (error: unknown) {
+    if (signal?.aborted) {
+      throw error
+    }
+
+    const networkError = getErrorMessage(error)
+    let cachedData: string | null
+
+    try {
+      cachedData = window.localStorage.getItem(CHARACTERS_CACHE_KEY)
+    } catch (storageError: unknown) {
+      throw new Error(
+        `${networkError}. Saved data could not be accessed: ${getErrorMessage(storageError)}`,
+        { cause: storageError },
+      )
+    }
+
+    if (cachedData === null) {
+      throw error
+    }
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(cachedData)
+    } catch (parseError: unknown) {
+      throw new Error(
+        `${networkError}. The saved character data is invalid and cannot be used.`,
+        { cause: parseError },
+      )
+    }
+
+    if (!Array.isArray(parsed) || !parsed.every(isCharacter)) {
+      throw new Error(
+        `${networkError}. The saved character data has an unexpected format.`,
+        { cause: error },
+      )
+    }
+
+    return {
+      characters: parsed,
+      source: 'cache',
+      networkError,
+      cacheWarning: null,
+    }
+  }
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'An unexpected error occurred'
+}
+
 export async function fetchCharacter(
   id: number,
   signal?: AbortSignal,
@@ -81,6 +174,46 @@ export async function fetchCharacter(
   }
 
   return data
+}
+
+export async function fetchFilm(
+  id: number,
+  signal?: AbortSignal,
+): Promise<Film> {
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw new Error('Film ID must be a positive integer')
+  }
+
+  const response = await fetch(`https://swapi.info/api/films/${id}`, { signal })
+  ensureSuccessfulResponse(response)
+
+  const data: unknown = await response.json()
+  if (
+    !isRecord(data) ||
+    typeof data.title !== 'string' ||
+    typeof data.episode_id !== 'number' ||
+    typeof data.opening_crawl !== 'string' ||
+    typeof data.director !== 'string' ||
+    typeof data.producer !== 'string' ||
+    typeof data.release_date !== 'string' ||
+    typeof data.url !== 'string' ||
+    typeof data.created !== 'string' ||
+    typeof data.edited !== 'string'
+  ) {
+    throw new Error('The film API returned data in an unexpected format')
+  }
+
+  return {
+    title: data.title,
+    episode_id: data.episode_id,
+    opening_crawl: data.opening_crawl,
+    director: data.director,
+    producer: data.producer,
+    release_date: data.release_date,
+    url: data.url,
+    created: data.created,
+    edited: data.edited,
+  }
 }
 
 export async function fetchResourceName(

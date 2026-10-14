@@ -6,6 +6,7 @@ export interface FavoritesContextValue {
   storageError: string | null
   isFavorite: (character: Character) => boolean
   toggleFavorite: (character: Character) => void
+  replaceFavorites: (characters: Character[]) => void
 }
 
 export const FavoritesContext =

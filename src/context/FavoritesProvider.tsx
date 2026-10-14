@@ -84,9 +84,29 @@ export function FavoritesProvider({ children }: FavoritesProviderProps) {
     [favorites, isFavorite],
   )
 
+  const replaceFavorites = useCallback((nextFavorites: Character[]) => {
+    setFavorites(nextFavorites)
+
+    try {
+      window.localStorage.setItem(
+        FAVORITES_STORAGE_KEY,
+        JSON.stringify(nextFavorites),
+      )
+      setStorageError(null)
+    } catch (error: unknown) {
+      setStorageError(`Favorites could not be saved: ${getErrorMessage(error)}`)
+    }
+  }, [])
+
   return (
     <FavoritesContext.Provider
-      value={{ favorites, storageError, isFavorite, toggleFavorite }}
+      value={{
+        favorites,
+        storageError,
+        isFavorite,
+        toggleFavorite,
+        replaceFavorites,
+      }}
     >
       {children}
     </FavoritesContext.Provider>

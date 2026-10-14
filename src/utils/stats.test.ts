@@ -105,6 +105,7 @@ describe('filterAndSortCharacters', () => {
 
   const defaultFilters = {
     gender: 'all',
+    filmUrl: '',
     speciesUrl: '',
     homeworldUrl: '',
     sortBy: 'name',
@@ -143,6 +144,28 @@ describe('filterAndSortCharacters', () => {
         speciesUrl: 'none',
       }).map(({ name }) => name),
     ).toEqual(['Leia Organa'])
+  })
+
+  it('filters characters by film', () => {
+    const charactersWithFilm = [
+      {
+        ...characters[0],
+        films: ['https://swapi.info/api/films/1'],
+      },
+      ...characters.slice(1),
+    ]
+    expect(
+      filterAndSortCharacters(charactersWithFilm, '', {
+        ...defaultFilters,
+        filmUrl: 'https://swapi.info/api/films/1',
+      }).map(({ name }) => name),
+    ).toEqual(['Luke Skywalker'])
+    expect(
+      filterAndSortCharacters(charactersWithFilm, '', {
+        ...defaultFilters,
+        filmUrl: 'https://swapi.info/api/films/2',
+      }),
+    ).toEqual([])
   })
 })
 

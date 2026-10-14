@@ -54,3 +54,40 @@
   font-size: 14px;
   text-align: left;
 }
+
+.home-page__random {
+  min-height: 42px;
+  margin-bottom: 14px;
+  padding: 8px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.home-page__random:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.home-page__keyboard-tip {
+  margin: -6px 0 14px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.home-page__keyboard-tip kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--social-bg);
+  color: var(--text-h);
+  font: inherit;
+}

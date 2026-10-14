@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CharacterAvatar from '../components/CharacterAvatar'
+import CharacterCard from '../components/CharacterCard'
+import NetworkNotice from '../components/NetworkNotice'
 import { useFavorites } from '../context/useFavorites'
-import {
-  fetchCharacter,
-  fetchCharacters,
-  fetchResourceName,
-} from '../services/swapi'
+import { useCharacterDirectory } from '../hooks/useCharacterDirectory'
+import { fetchResourceName } from '../services/swapi'
 import type { Character } from '../types/character'
-import { extractId, getCharacterId } from '../utils/character'
+import { extractId } from '../utils/character'
+import { getSimilarCharacters } from '../utils/recommendations'
 import './CharacterDetailPage.css'
 
 type RelatedNameState =
@@ -90,6 +90,19 @@ function ReferenceBadge({
         ? relatedName.label
         : 'Loading name...'
 
+  if (reference.label === 'Film') {
+    return (
+      <Link
+        className="character-detail__badge character-detail__badge--link"
+        to={`/film/${reference.id}`}
+        title={`View details for ${label}`}
+        aria-busy={relatedName?.status === 'loading'}
+      >
+        {label}
+      </Link>
+    )
+  }
+
   return (
     <span
       className="character-detail__badge"
@@ -159,104 +172,135 @@ function CharacterDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { isFavorite, toggleFavorite } = useFavorites()
-  const [state, setState] = useState<CharacterState>({
-    status: 'loading',
-    id,
-  })
-  const [characterOrder, setCharacterOrder] = useState<{
-    previousId: string | null
-    nextId: string | null
-  }>({ previousId: null, nextId: null })
+  const { state: directoryState, retry } = useCharacterDirectory()
   const [relatedNames, setRelatedNames] = useState<
     Record<string, RelatedNameState>
   >({})
 
-  useEffect(() => {
-    const controller = new AbortController()
-    const parsedId = id && /^\d+$/.test(id) ? Number(id) : Number.NaN
-
-    async function loadCharacter() {
-      try {
-        const [character, characters] = await Promise.all([
-          fetchCharacter(parsedId, controller.signal),
-          fetchCharacters(controller.signal),
-        ])
-        setState({ status: 'success', id, character })
-
-        const characterIds = characters.map((item) =>
-          getCharacterId(item.url),
+  const currentCharacter =
+    directoryState.status === 'success'
+      ? directoryState.characters.find(
+          (character) =>
+            extractId(character.url) ===
+            (id && /^\d+$/.test(id) ? String(Number(id)) : id),
         )
-        const currentIndex = characterIds.indexOf(String(parsedId))
-
-        setCharacterOrder({
-          previousId:
-            currentIndex > 0 ? characterIds[currentIndex - 1] : null,
-          nextId:
-            currentIndex >= 0 && currentIndex < characterIds.length - 1
-              ? characterIds[currentIndex + 1]
-              : null,
-        })
-
-        const resourceUrls = [
-          character.homeworld,
-          ...character.films,
-          ...character.species,
-          ...character.vehicles,
-          ...character.starships,
-        ]
-        const uniqueResourceUrls = [...new Set(resourceUrls)]
-
-        setRelatedNames(
-          Object.fromEntries(
-            uniqueResourceUrls.map((url) => [
-              url,
-              { status: 'loading' as const },
-            ]),
-          ),
-        )
-
-        const resolvedNames = await Promise.all(
-          uniqueResourceUrls.map(async (url) => {
-            try {
-              const name = await fetchResourceName(url, controller.signal)
-              return [url, { status: 'resolved', name }] as const
-            } catch {
-              const reference = getApiReference(url)
-
-              return [
-                url,
-                {
-                  status: 'fallback',
-                  label: reference
-                    ? `${reference.label} #${reference.id}`
-                    : url,
-                },
-              ] as const
+      : undefined
+  const currentState: CharacterState =
+    directoryState.status === 'loading'
+      ? { status: 'loading', id }
+      : directoryState.status === 'error'
+        ? { status: 'error', id, message: directoryState.message }
+        : currentCharacter
+          ? { status: 'success', id, character: currentCharacter }
+          : {
+              status: 'error',
+              id,
+              message: `Character ${id ?? ''} was not found in the character list.`,
             }
-          }),
+  const loadedCharacter =
+    currentState.status === 'success' ? currentState.character : undefined
+  const characterIds =
+    directoryState.status === 'success'
+      ? directoryState.characters
+          .map((character) => extractId(character.url))
+          .filter(Boolean)
+      : []
+  const requestedCharacterId =
+    id && /^\d+$/.test(id) ? String(Number(id)) : id ?? ''
+  const currentIndex = characterIds.indexOf(requestedCharacterId)
+  const characterOrder = {
+    previousId: currentIndex > 0 ? characterIds[currentIndex - 1] : null,
+    nextId:
+      currentIndex >= 0 && currentIndex < characterIds.length - 1
+        ? characterIds[currentIndex + 1]
+        : null,
+  }
+  const similarCharacters =
+    currentState.status === 'success' &&
+    directoryState.status === 'success'
+      ? getSimilarCharacters(
+          currentState.character,
+          directoryState.characters,
+          4,
         )
+      : []
 
-        if (!controller.signal.aborted) {
-          setRelatedNames(Object.fromEntries(resolvedNames))
-        }
-      } catch (error: unknown) {
-        if (controller.signal.aborted) {
-          return
-        }
+  useEffect(() => {
+    if (!loadedCharacter) {
+      return
+    }
 
-        const message =
-          error instanceof Error ? error.message : 'An unexpected error occurred'
-        setState({ status: 'error', id, message })
+    const controller = new AbortController()
+    const resourceUrls = [
+      loadedCharacter.homeworld,
+      ...loadedCharacter.films,
+      ...loadedCharacter.species,
+      ...loadedCharacter.vehicles,
+      ...loadedCharacter.starships,
+    ]
+    const uniqueResourceUrls = [...new Set(resourceUrls)]
+
+    async function loadRelatedNames() {
+      const resolvedNames = await Promise.all(
+        uniqueResourceUrls.map(async (url) => {
+          try {
+            const name = await fetchResourceName(url, controller.signal)
+            return [url, { status: 'resolved', name }] as const
+          } catch {
+            const reference = getApiReference(url)
+            return [
+              url,
+              {
+                status: 'fallback',
+                label: reference
+                  ? `${reference.label} #${reference.id}`
+                  : url,
+              },
+            ] as const
+          }
+        }),
+      )
+
+      if (!controller.signal.aborted) {
+        setRelatedNames(Object.fromEntries(resolvedNames))
       }
     }
 
-    void loadCharacter()
+    void loadRelatedNames()
 
     return () => controller.abort()
-  }, [id])
+  }, [loadedCharacter])
 
-  const currentState: CharacterState =
-    state.id === id ? state : { status: 'loading', id }
+  useEffect(() => {
+    function handleCharacterShortcut(event: KeyboardEvent) {
+      const target = event.target
+      const isInteractive =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.matches('input, textarea, select, button, a'))
+
+      if (
+        isInteractive ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey
+      ) {
+        return
+      }
+
+      if (event.key === 'ArrowLeft' && characterOrder.previousId) {
+        event.preventDefault()
+        navigate(`/character/${characterOrder.previousId}`)
+      } else if (event.key === 'ArrowRight' && characterOrder.nextId) {
+        event.preventDefault()
+        navigate(`/character/${characterOrder.nextId}`)
+      }
+    }
+
+    window.addEventListener('keydown', handleCharacterShortcut)
+    return () => window.removeEventListener('keydown', handleCharacterShortcut)
+  }, [characterOrder.nextId, characterOrder.previousId, navigate])
+
   const routeCharacterId = id && /^\d+$/.test(id) ? id : undefined
   const urlCharacterId =
     currentState.status === 'success'
@@ -278,12 +322,25 @@ function CharacterDetailPage() {
         </p>
       )}
       {currentState.status === 'error' && (
-        <p className="character-detail__message" role="alert">
-          Error: {currentState.message}
-        </p>
+        <NetworkNotice
+          message={`Error: ${currentState.message}`}
+          onRetry={retry}
+        />
       )}
       {currentState.status === 'success' && (
         <article>
+          {directoryState.status === 'success' &&
+            directoryState.networkError && (
+              <NetworkNotice
+                message={directoryState.networkError}
+                onRetry={retry}
+                savedData={directoryState.source === 'cache'}
+              />
+            )}
+          {directoryState.status === 'success' &&
+            directoryState.cacheWarning && (
+              <p role="status">{directoryState.cacheWarning}</p>
+            )}
           <div className="character-detail__header">
             <div className="character-detail__identity">
               <CharacterAvatar
@@ -319,24 +376,31 @@ function CharacterDetailPage() {
             <button
               type="button"
               disabled={!characterOrder.previousId}
+              aria-label="Previous character"
               onClick={() =>
                 characterOrder.previousId &&
                 navigate(`/character/${characterOrder.previousId}`)
               }
             >
-              ← Previous Character
+              <span aria-hidden="true">←</span>
+              Previous
             </button>
             <button
               type="button"
               disabled={!characterOrder.nextId}
+              aria-label="Next character"
               onClick={() =>
                 characterOrder.nextId &&
                 navigate(`/character/${characterOrder.nextId}`)
               }
             >
-              Next Character →
+              Next
+              <span aria-hidden="true">→</span>
             </button>
           </nav>
+          <p className="character-detail__keyboard-tip">
+            Use <kbd>←</kbd> and <kbd>→</kbd> to browse characters
+          </p>
           <dl className="character-detail__fields">
             {characterFields.map(({ key, label }) => {
               return (
@@ -353,6 +417,25 @@ function CharacterDetailPage() {
               )
             })}
           </dl>
+          {similarCharacters.length > 0 && (
+            <section
+              className="character-detail__similar"
+              aria-labelledby="similar-characters-title"
+            >
+              <h2 id="similar-characters-title">Similar characters</h2>
+              <p className="character-detail__similar-description">
+                Based on shared films, species, and homeworld.
+              </p>
+              <div className="character-grid">
+                {similarCharacters.map(({ character, reasons }) => (
+                  <div className="character-detail__similar-card" key={character.url}>
+                    <CharacterCard character={character} />
+                    <p>{reasons.join(' · ')}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </article>
       )}
     </section>

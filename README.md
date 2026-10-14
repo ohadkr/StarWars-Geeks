@@ -5,10 +5,18 @@ StarWars Geeks is a responsive React application for exploring Star Wars charact
 ## Features
 
 - **Character browser (Master–Detail):** Browse characters and open a detail page for each one.
-- **Search, filtering, and sorting:** Filter by name, gender, species, or homeworld, and sort by name, height, or mass.
+- **Search, filtering, and sorting:** Filter by name, gender, film, species, or homeworld, and sort by name, height, or mass.
+- **Character comparison:** Select two characters and compare their physical traits, birth year, gender, and homeworld.
+- **Shareable comparisons:** Share a comparison using its URL, which preserves both selected characters.
 - **Character details:** View character attributes and readable names for related films, planets, species, vehicles, and starships.
-- **Favorites:** Add or remove characters from favorites; selections persist in `localStorage`.
-- **Statistics dashboard:** View character and favorite counts, average height and mass, and a gender breakdown.
+- **Similar characters:** Discover related characters based on shared films, species, or homeworld.
+- **Film pages:** Open a film from a character profile to see its episode details, opening crawl, and characters.
+- **Random discovery:** Pick a random character from the home page.
+- **Favorites:** Add or remove characters from favorites; search, sort, and import/export the list as JSON. Selections persist in `localStorage`.
+- **Statistics dashboard:** Compare character totals, average height and mass, and gender breakdowns for the full directory and favorites.
+- **Theme:** Switch between light and dark modes; the preference persists in `localStorage` and follows the system theme by default.
+- **Offline resilience:** Character data is cached locally when available, with retry controls and a visible notice when saved data is being shown.
+- **Accessibility and motion:** Keyboard shortcuts support search and character navigation, focus indicators remain visible, and animations respect reduced-motion preferences.
 - **Responsive layout:** The pages adapt to narrow mobile screens and wider desktop screens.
 
 ## Image Handling & Network Resilience
