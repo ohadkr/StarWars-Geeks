@@ -2,7 +2,6 @@ import type { Character } from '../types/character'
 
 const PEOPLE_URL = 'https://swapi.info/api/people'
 const CHARACTERS_CACHE_KEY = 'starwars-geeks-characters-cache'
-const STARSHIPS_URL = 'https://swapi.info/api/starships'
 
 export interface CharacterDirectoryResult {
   characters: Character[]
@@ -21,53 +20,6 @@ export interface Film {
   url: string
   created: string
   edited: string
-}
-
-export interface Starship {
-  name: string
-  model: string
-  manufacturer: string
-  cost_in_credits: string
-  length: string
-  max_atmosphering_speed: string
-  crew: string
-  passengers: string
-  cargo_capacity: string
-  consumables: string
-  hyperdrive_rating: string
-  MGLT: string
-  starship_class: string
-  pilots: string[]
-  films: string[]
-  created: string
-  edited: string
-  url: string
-}
-
-function isStarship(value: unknown): value is Starship {
-  return (
-    isRecord(value) &&
-    typeof value.name === 'string' &&
-    typeof value.model === 'string' &&
-    typeof value.manufacturer === 'string' &&
-    typeof value.cost_in_credits === 'string' &&
-    typeof value.length === 'string' &&
-    typeof value.max_atmosphering_speed === 'string' &&
-    typeof value.crew === 'string' &&
-    typeof value.passengers === 'string' &&
-    typeof value.cargo_capacity === 'string' &&
-    typeof value.consumables === 'string' &&
-    typeof value.hyperdrive_rating === 'string' &&
-    typeof value.MGLT === 'string' &&
-    typeof value.starship_class === 'string' &&
-    Array.isArray(value.pilots) &&
-    value.pilots.every((item: unknown) => typeof item === 'string') &&
-    Array.isArray(value.films) &&
-    value.films.every((item: unknown) => typeof item === 'string') &&
-    typeof value.created === 'string' &&
-    typeof value.edited === 'string' &&
-    typeof value.url === 'string'
-  )
 }
 
 function isFilm(value: unknown): value is Film {
@@ -272,43 +224,6 @@ export async function fetchFilms(signal?: AbortSignal): Promise<Film[]> {
   return data
 }
 
-export async function fetchStarships(
-  signal?: AbortSignal,
-): Promise<Starship[]> {
-  const response = await fetch(STARSHIPS_URL, { signal })
-  if (!response.ok) {
-    throw new Error(`Failed to fetch starships (${response.status})`)
-  }
-
-  const data: unknown = await response.json()
-  if (!Array.isArray(data) || !data.every(isStarship)) {
-    throw new Error('The starships API returned data in an unexpected format')
-  }
-
-  return data
-}
-
-export async function fetchStarship(
-  id: number,
-  signal?: AbortSignal,
-): Promise<Starship> {
-  if (!Number.isSafeInteger(id) || id < 1) {
-    throw new Error('Starship ID must be a positive integer')
-  }
-
-  const response = await fetch(`${STARSHIPS_URL}/${id}`, { signal })
-  if (!response.ok) {
-    throw new Error(`Failed to fetch starship (${response.status})`)
-  }
-
-  const data: unknown = await response.json()
-  if (!isStarship(data)) {
-    throw new Error('The starship API returned data in an unexpected format')
-  }
-
-  return data
-}
-
 export async function fetchResourceName(
   url: string,
   signal?: AbortSignal,
@@ -322,7 +237,7 @@ export async function fetchResourceName(
   }
 
   const match = resourceUrl.pathname.match(
-    /^\/api\/(films|planets|species|starships|vehicles)\/\d+\/?$/,
+    /^\/api\/(films|planets|species|vehicles|starships)\/\d+\/?$/,
   )
 
   if (

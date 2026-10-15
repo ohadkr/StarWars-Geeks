@@ -5,8 +5,7 @@ import {
   fetchCharactersWithCache,
   fetchFilm,
   fetchFilms,
-  fetchStarship,
-  fetchStarships,
+  fetchResourceName,
 } from './swapi'
 
 const CACHE_KEY = 'starwars-geeks-characters-cache'
@@ -31,82 +30,27 @@ const characters: Character[] = [
   },
 ]
 
-const starship = {
-  name: 'Millennium Falcon',
-  model: 'YT-1300 light freighter',
-  manufacturer: 'Corellian Engineering Corporation',
-  cost_in_credits: '100000',
-  length: '34.37',
-  max_atmosphering_speed: '1050',
-  crew: '4',
-  passengers: '6',
-  cargo_capacity: '100000',
-  consumables: '2 months',
-  hyperdrive_rating: '0.5',
-  MGLT: '75',
-  starship_class: 'Light freighter',
-  pilots: [],
-  films: [],
-  created: '',
-  edited: '',
-  url: 'https://swapi.info/api/starships/10',
-}
-
 describe('fetchCharactersWithCache', () => {
   beforeEach(() => {
     window.localStorage.clear()
   })
 
-  describe('starship API', () => {
+  describe('fetchResourceName', () => {
     afterEach(() => {
       vi.unstubAllGlobals()
     })
 
-    it('loads and validates the full starship catalog', async () => {
+    it('resolves starship names from valid SWAPI references', async () => {
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue(
-          new Response(JSON.stringify([starship]), { status: 200 }),
+          new Response(JSON.stringify({ name: 'X-wing' }), { status: 200 }),
         ),
       )
 
-      await expect(fetchStarships()).resolves.toEqual([starship])
-      expect(fetch).toHaveBeenCalledWith(
-        'https://swapi.info/api/starships',
-        { signal: undefined },
-      )
-    })
-
-    it('loads starship details by numeric ID', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(JSON.stringify(starship), { status: 200 }),
-        ),
-      )
-
-      await expect(fetchStarship(10)).resolves.toEqual(starship)
-      expect(fetch).toHaveBeenCalledWith(
-        'https://swapi.info/api/starships/10',
-        { signal: undefined },
-      )
-    })
-
-    it('rejects invalid IDs and malformed starship responses', async () => {
-      await expect(fetchStarship(0)).rejects.toThrow(
-        'Starship ID must be a positive integer',
-      )
-
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(JSON.stringify([{ name: 'Incomplete' }]), { status: 200 }),
-        ),
-      )
-
-      await expect(fetchStarships()).rejects.toThrow(
-        'The starships API returned data in an unexpected format',
-      )
+      await expect(
+        fetchResourceName('https://swapi.info/api/starships/12/'),
+      ).resolves.toBe('X-wing')
     })
   })
 

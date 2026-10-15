@@ -171,6 +171,26 @@
     transform 0.2s ease;
 }
 
+.character-detail__badge--starship {
+  gap: 7px;
+  border-color: rgba(34, 211, 238, 0.42);
+  background:
+    linear-gradient(110deg, rgba(124, 58, 237, 0.1), rgba(34, 211, 238, 0.1)),
+    var(--surface);
+  color: var(--text-h);
+}
+
+.character-detail__starship-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  fill: var(--accent);
+  stroke: #22d3ee;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.8;
+}
+
 .character-detail__badge--link:hover {
   transform: translateY(-1px);
   border-color: var(--accent-border);
