@@ -64,8 +64,8 @@ function FilmDetailPage() {
 
   return (
     <section className="film-detail">
-      <Link className="film-detail__back" to="/">
-        Back to characters
+      <Link className="film-detail__back" to="/films">
+        Back to Films
       </Link>
       {filmState.status === 'loading' && (
         <p role="status">Loading film details...</p>

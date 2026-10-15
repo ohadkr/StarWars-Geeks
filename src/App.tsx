@@ -10,6 +10,8 @@ import FilmDetailPage from './pages/FilmDetailPage'
 import FilmsPage from './pages/FilmsPage'
 import HomePage from './pages/HomePage'
 import StatsPage from './pages/StatsPage'
+import StarshipDetailPage from './pages/StarshipDetailPage'
+import StarshipsPage from './pages/StarshipsPage'
 import './App.css'
 
 type Theme = 'light' | 'dark'
@@ -87,6 +89,8 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/films" element={<FilmsPage />} />
+          <Route path="/starships" element={<StarshipsPage />} />
+          <Route path="/starships/:id" element={<StarshipDetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/compare" element={<ComparePage />} />

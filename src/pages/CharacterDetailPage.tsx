@@ -5,6 +5,7 @@ import CharacterAvatar from '../components/CharacterAvatar'
 import CharacterCard from '../components/CharacterCard'
 import FilmArtwork from '../components/FilmArtwork'
 import NetworkNotice from '../components/NetworkNotice'
+import StarshipArtwork from '../components/StarshipArtwork'
 import { useFavorites } from '../context/useFavorites'
 import { useCharacterDirectory } from '../hooks/useCharacterDirectory'
 import { fetchResourceName } from '../services/swapi'
@@ -102,6 +103,24 @@ function ReferenceBadge({
         <FilmArtwork
           filmId={reference.id}
           filmTitle={label}
+          size="thumbnail"
+        />
+        <span>{label}</span>
+      </Link>
+    )
+  }
+
+  if (reference.label === 'Starship') {
+    return (
+      <Link
+        className="character-detail__badge character-detail__badge--link"
+        to={`/starships/${reference.id}`}
+        title={`View details for ${label}`}
+        aria-busy={relatedName?.status === 'loading'}
+      >
+        <StarshipArtwork
+          starshipId={reference.id}
+          starshipName={label}
           size="thumbnail"
         />
         <span>{label}</span>

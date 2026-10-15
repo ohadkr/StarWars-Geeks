@@ -1,0 +1,107 @@
+.starships-page {
+  width: min(100%, 1100px);
+  margin-inline: auto;
+}
+
+.starships-page__header {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.starships-page__eyebrow {
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.starships-page__header h1 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 48px);
+  line-height: 1.12;
+}
+
+.starships-page__header > p:last-child {
+  margin: 12px 0 0;
+  color: var(--text);
+}
+
+.starships-page__message {
+  text-align: center;
+}
+
+.starships-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 18px;
+}
+
+.starship-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, var(--accent-bg), transparent 62%),
+    var(--surface);
+  color: var(--text-h);
+  text-align: left;
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.starship-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-border);
+  box-shadow: 0 20px 42px -22px rgba(124, 58, 237, 0.4);
+}
+
+.starship-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.starship-card__details {
+  min-width: 0;
+  padding: 0 4px 4px;
+}
+
+.starship-card__details h2 {
+  margin: 0;
+  font-size: clamp(18px, 3vw, 22px);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.starship-card__details p {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.starship-card__details span {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starship-card {
+    transition: none;
+  }
+
+  .starship-card:hover {
+    transform: none;
+  }
+}

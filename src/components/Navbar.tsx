@@ -27,6 +27,14 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
         Films
       </NavLink>
       <NavLink
+        to="/starships"
+        className={({ isActive }) =>
+          isActive ? 'navbar__link navbar__link--active' : 'navbar__link'
+        }
+      >
+        Starships
+      </NavLink>
+      <NavLink
         to="/favorites"
         className={({ isActive }) =>
           isActive ? 'navbar__link navbar__link--active' : 'navbar__link'
