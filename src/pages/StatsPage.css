@@ -30,14 +30,27 @@
   min-width: 0;
   padding: 22px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 8px 28px rgba(39, 31, 73, 0.06);
   text-align: left;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
 }
 
 .stats-card--highlight {
   border-color: var(--accent-border);
-  background: var(--accent-bg);
+  background:
+    radial-gradient(circle at top right, var(--accent-bg), transparent 65%),
+    var(--surface);
 }
 
 .stats-card h3,
@@ -89,5 +102,15 @@
 @media (max-width: 480px) {
   .stats-card {
     padding: 18px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stats-card {
+      transition: none;
+    }
+
+    .stats-card:hover {
+      transform: none;
+    }
   }
 }

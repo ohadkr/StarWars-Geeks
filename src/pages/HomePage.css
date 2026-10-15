@@ -1,9 +1,15 @@
 .character-controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-  gap: 12px;
+  gap: 14px;
   align-items: end;
-  margin: 0 0 12px;
+  margin: 0 0 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--control-bg);
+  box-shadow: 0 8px 28px rgba(39, 31, 73, 0.06);
+  backdrop-filter: blur(16px);
   text-align: left;
 }
 
@@ -21,16 +27,20 @@
   min-height: 44px;
   padding: 8px 10px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
+  border-radius: 12px;
+  background: var(--surface);
   color: var(--text-h);
   font: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .character-controls__field select:focus-visible,
 .character-controls__reset:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 4px var(--accent-bg);
 }
 
 .character-controls__field--films {
@@ -44,6 +54,7 @@
 }
 
 .film-filter-option {
+  position: relative;
   display: flex;
   min-width: 0;
   min-height: 56px;
@@ -51,23 +62,49 @@
   gap: 8px;
   padding: 4px 8px 4px 4px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
+  border-radius: 12px;
+  background: var(--surface);
   color: var(--text-h);
   font: inherit;
   font-size: 12px;
   text-align: left;
   cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
-.film-filter-option:hover,
-.film-filter-option[aria-pressed='true'] {
+.film-filter-option:hover {
+  transform: translateY(-1px);
   border-color: var(--accent-border);
   background: var(--accent-bg);
 }
 
+.film-filter-option[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  box-shadow:
+    0 0 0 1px var(--accent-border),
+    0 0 18px rgba(124, 58, 237, 0.18);
+}
+
+.film-filter-option[aria-pressed='true']::after {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--control-bg);
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.65);
+  content: '';
+}
+
 .film-filter-option:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--accent-border);
   outline-offset: 2px;
 }
 
@@ -82,7 +119,7 @@
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 8px;
   background: var(--social-bg);
   color: var(--text);
   font-size: 10px;
@@ -93,8 +130,8 @@
   min-height: 44px;
   padding: 8px 14px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
+  border-radius: 12px;
+  background: var(--surface);
   color: var(--text-h);
   font: inherit;
   cursor: pointer;
@@ -102,6 +139,7 @@
 
 .character-controls__reset:hover {
   border-color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .home-page__result-count {
@@ -115,22 +153,30 @@
   min-height: 42px;
   margin-bottom: 14px;
   padding: 8px 16px;
-  border: 1px solid var(--accent-border);
+  border: 0;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--text-h);
+  background: linear-gradient(110deg, #9333ea, #4f46e5);
+  color: #fff;
   font: inherit;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+  box-shadow: 0 10px 26px rgba(79, 70, 229, 0.28);
 }
 
 .home-page__random:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 14px 32px rgba(139, 92, 246, 0.36);
+  filter: saturate(1.12);
+}
+
+.home-page__random:focus-visible {
+  outline: 3px solid var(--accent-border);
+  outline-offset: 3px;
 }
 
 .home-page__keyboard-tip {
@@ -142,8 +188,20 @@
 .home-page__keyboard-tip kbd {
   padding: 1px 6px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--social-bg);
   color: var(--text-h);
   font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page__random,
+  .film-filter-option {
+    transition: none;
+  }
+
+  .home-page__random:hover,
+  .film-filter-option:hover {
+    transform: none;
+  }
 }

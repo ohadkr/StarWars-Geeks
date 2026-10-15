@@ -45,8 +45,10 @@
   gap: clamp(16px, 3vw, 24px);
   padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--social-bg);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, var(--accent-bg), transparent 62%),
+    var(--surface);
   color: var(--text-h);
   text-align: left;
   text-decoration: none;
@@ -57,9 +59,9 @@
 }
 
 .film-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
   border-color: var(--accent-border);
-  box-shadow: var(--shadow);
+  box-shadow: 0 20px 42px -22px rgba(124, 58, 237, 0.38);
 }
 
 .film-card:focus-visible {

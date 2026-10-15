@@ -1,15 +1,19 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --text: #5f6174;
+  --text-h: #17162b;
+  --bg: #f7f7fc;
+  --surface: rgba(255, 255, 255, 0.88);
+  --border: #e4e2f2;
+  --code-bg: #eeedf7;
+  --accent: #7c3aed;
+  --accent-bg: rgba(124, 58, 237, 0.09);
+  --accent-border: rgba(124, 58, 237, 0.42);
+  --social-bg: rgba(244, 243, 252, 0.78);
+  --nav-bg: rgba(255, 255, 255, 0.82);
+  --control-bg: rgba(255, 255, 255, 0.9);
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(42, 31, 78, 0.1) 0 18px 40px -18px,
+    rgba(42, 31, 78, 0.08) 0 6px 16px -8px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -19,7 +23,10 @@
   letter-spacing: 0.18px;
   color-scheme: light;
   color: var(--text);
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(196, 181, 253, 0.3), transparent 34rem),
+    radial-gradient(ellipse at 90% 12%, rgba(103, 232, 249, 0.16), transparent 30rem),
+    var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,17 +38,25 @@
 }
 
 :root[data-theme='dark'] {
-  --text: #9ca3af;
-  --text-h: #f3f4f6;
-  --bg: #16171d;
-  --border: #2e303a;
-  --code-bg: #1f2028;
-  --accent: #c084fc;
-  --accent-bg: rgba(192, 132, 252, 0.15);
-  --accent-border: rgba(192, 132, 252, 0.5);
-  --social-bg: rgba(47, 48, 58, 0.5);
+  --text: #a6a8bd;
+  --text-h: #f4f2ff;
+  --bg: #090b16;
+  --surface: rgba(18, 21, 38, 0.88);
+  --border: #292c45;
+  --code-bg: #171a2d;
+  --accent: #c4a1ff;
+  --accent-bg: rgba(139, 92, 246, 0.16);
+  --accent-border: rgba(167, 139, 250, 0.55);
+  --social-bg: rgba(24, 27, 47, 0.84);
+  --nav-bg: rgba(12, 14, 27, 0.84);
+  --control-bg: rgba(15, 18, 34, 0.88);
   --shadow:
-    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.45) 0 20px 44px -16px,
+    rgba(0, 0, 0, 0.28) 0 6px 18px -8px;
+  background:
+    radial-gradient(ellipse at 14% 0%, rgba(91, 33, 182, 0.22), transparent 36rem),
+    radial-gradient(ellipse at 88% 10%, rgba(8, 145, 178, 0.12), transparent 32rem),
+    var(--bg);
   color-scheme: dark;
 }
 
@@ -50,11 +65,10 @@
 }
 
 #root {
-  width: 1126px;
+  width: min(100%, 1440px);
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -62,7 +76,10 @@
 }
 
 body {
+  min-width: 320px;
+  min-height: 100svh;
   margin: 0;
+  background: transparent;
 }
 
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
@@ -84,7 +101,7 @@ body {
 h1,
 h2 {
   font-family: var(--heading);
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-h);
 }
 

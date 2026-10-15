@@ -419,3 +419,38 @@
 > 1. Replace robot-style avatars with original Star Wars character portraits matched to each character by name, and ensure every character has a working image.
 > 3. Display the relevant movie poster next to every movie name throughout the application.
 > 4. Add a Films page to the navigation between Home and Favorites, listing all six films in episode order with posters and links to their detail pages.
+
+## 2026-10-15
+
+**19:33 · copilot**
+
+> I have updated `DESIGN.md` with our updated UI/UX specifications.
+> 
+> Please inspect `CharacterCard.tsx` and any other component rendering character names:
+> 
+> 1. Fix the character name truncation issue: Remove strict single-line `truncate` or `overflow-hidden` constraints that cut off long names (e.g. 'Bail Prestor Organa', 'Beru Whitesun Lars').
+> 2. Use `line-clamp-2`, `break-words`, and responsive font sizes (`text-base sm:text-lg font-bold leading-tight`) so that character names are always fully readable without being cut off with `...`.
+> 3. Verify that all lint checks, TypeScript diagnostics, and tests pass.
+
+**19:38 · copilot**
+
+> Please update the visual design and styling across the entire Star Wars Geeks application to make it look sleek, ultra-modern, and Star Wars inspired:
+> 
+> 1. **Header & Titles:**
+> 
+> - Upgrade the main title 'StarWars Geeks' with a vivid gradient text style (`bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 bg-clip-text text-transparent font-black`).
+> - Transform the 'Surprise me with a character' button into a glowing gradient pill button (`bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg hover:shadow-purple-500/25 hover:scale-105 transition-all`).
+> 2. **Character Card Redesign (`CharacterCard.tsx` / `CharacterCard.css`):**
+> 
+> - Add smooth hover elevation and border glow (`hover:-translate-y-1.5 hover:shadow-xl hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-300`).
+> - Style details (Gender, Birth year, Homeworld) as sleek colored pill badges (e.g., subtle indigo/purple tint backgrounds with bold labels).
+> - Make favorited stars pop with a glowing gold/amber gradient (`text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]`).
+> 3. **Filter Control Panel:**
+> 
+> - Style the search input and dropdown filters into a polished, modern control panel with clear borders and subtle shadows (`backdrop-blur-md bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-purple-100 dark:border-slate-800 shadow-sm`).
+> - Film selection badges: Highlight selected film filters with vibrant glowing borders and active indicator colors.
+> 4. **Navigation & Global Polish:**
+> 
+> - Refine Navbar tabs with subtle pill highlights (`bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 font-semibold`).
+> - Ensure both Light and Dark themes look rich, vibrant, and fully polished.
+> 5. Verify that all 28 tests, TypeScript checks, and build processes pass cleanly with 0 errors.
